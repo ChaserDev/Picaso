@@ -5,3 +5,7 @@
  */
 
 
+function testGitNetbeans()
+{
+    var test= "this is a test";
+}
