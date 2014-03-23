@@ -1,76 +1,98 @@
-var Instagram = {};
-var testImages = [];
+$(document).ready(function() {
+    var Instagram = {};
+    var testImages = [];
 
-(function() {
-    function search(tag) {
-        $.getJSON(url, toScreen);
-    }
-    function toScreen(photos) {
-        //console.log(data);
+
+    Instagram.Config = {
+        clientID: "4e32d268a27b498e8c9e7840c7863f11",
+        apiHost: "https://api.instagram.com"
+    };
+
+    (function() {
         var sources = [];
 
-        $.each(photos.data, function(index, photo) {
-
-            // I'll construct the image tag on the fly.
-            // The images property contains objects representing images of
-            // varying quality. I'll give low_resulution a try.
-            //var image = new Image();
-            //image.src = photo.images.low_resolution.url;
-
-            //testImages.push(image);
-            sources.push(photo.images.low_resolution.url);
-//            photo = "<img src='" + photo.images.low_resolution.url + "' />";
+//    function toScreen(photos) {
+//        //console.log(data);
+//        var sources = [];
 //
-//            $('div#photos-wrap').append(photo);
-        });
-        alert(sources.length);
+//        $.each(photos.data, function(index, photo) {
+//            sources.push(photo.images.low_resolution.url);
+//        });
+//
+//        return sources;
+//    }
 
-        function loadImages(sources, callback) {
-            var images = {};
-            var loadedImages = 0;
-            var numImages = 0;
-            // get num of sources
-            for (var src in sources) {
-                numImages++;
-            }
-            for (var src in sources) {
-                images[src] = new Image();
-                images[src].onload = function() {
-                    if (++loadedImages >= numImages) {
-                        callback(images);
-                    }
-                };
-                images[src].src = sources[src];
-            }
+        function imageSources() {
+            return sources;
         }
 
-        //alert(testImages.length);
+        function generateUrl(tag) {
+            var config = Instagram.Config;
+            var testurl = config.apiHost + "/v1/tags/" + tag + "/media/recent?callback=?&amp;client_id=" + config.clientID;
 
-        // Get DOM elements
-        var element = document.getElementById('game');
-        var canvas = element.firstElementChild;
+            return function(max_id) {
+                if (typeof max_id === 'string' && max_id.trim() !== '') {
+                    testurl += "&max_id=" + max_id;
+                }
+                return testurl;
+            };
+        }
 
-        // Original content size
-        var content = [canvas.width, canvas.height];
+        function search(tag) {
+            var url = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
 
-        // Setting up the canvas
-        var context = canvas.getContext('2d');
-        //ctx.fillStyle = '#6f8ed9';
-        //ctx.fillRect(0, 0, content[0], content[1]);
-        loadImages(sources, function(images) {
-            for (i = 0; i < 10; i++) {
-                context.drawImage(images[i], 100, i * (30), 200, 137);
-            }
-            
-        });
+            var resource = generateUrl(tag);
+
+            $.getJSON(resource(), function(json) {
+                $.each(json.data, function(index, photo) {
+                    testImages.push(photo.images.low_resolution.url);
+                });
+            });
+        }
+
+        Instagram.search = search;
+        Instagram.imageSources = imageSources;
+    })();
+
+    Instagram.search('snow');
+
+    var sources = Instagram.imageSources();
+
+    console.log(sources.length);
+
+    function loadImages(sources, callback) {
+        var images = {};
+        var loadedImages = 0;
+        var numImages = 0;
+        // get num of sources
+        for (var src in sources) {
+            numImages++;
+        }
+        for (var src in sources) {
+            images[src] = new Image();
+            images[src].onload = function() {
+                if (++loadedImages >= numImages) {
+                    callback(images);
+                }
+            };
+            images[src].src = sources[src];
+        }
     }
-    function search(tag) {
-        var url = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11"
-        $.getJSON(url, toScreen);
-    }
-    Instagram.search = search;
-})();
 
+    // Get DOM elements
+    var element = document.getElementById('game');
+    var canvas = element.firstElementChild;
 
+    // Original content size
+    var content = [canvas.width, canvas.height];
 
-Instagram.search('cats');
+    // Setting up the canvas
+    var context = canvas.getContext('2d');
+    //ctx.fillStyle = '#6f8ed9';
+    //ctx.fillRect(0, 0, content[0], content[1]);
+    loadImages(sources, function(images) {
+        for (i = 0; i < sources.length; i++) {
+            context.drawImage(images[i], 100, i * 8, 8, 8);
+        }
+    });
+});
