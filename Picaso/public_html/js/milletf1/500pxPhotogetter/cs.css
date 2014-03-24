@@ -6,6 +6,11 @@
 	border: 1px solid black;
 }
 
+#statusOut {
+	position: absolute;
+	left: 900px;
+}
+
 #btn {
 	position: relative;
 	text-align:center;
@@ -16,4 +21,12 @@ img {
  margin: 0;
  position: relative;
  float: left;
+}
+
+.tile {
+	position: relative;
+	float: left;
+	width: 8px;
+	height: 8px;
+	margin: 0px;
 }
