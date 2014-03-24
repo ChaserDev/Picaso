@@ -2,16 +2,62 @@ var TILE_WIDTH = 8;
 var TILE_HEIGHT = 8;
 //
 var timer;
+var colorTimer;
 //
+var colorArray = [];
+var clrObjArray = [];
+
+var str = "tLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut sem eros. Nunc libero lectus, fringilla at pretium non, blandit sed mi. Aenean porttitor ipsum a nibh euismod, in sollicitudin dolor accumsan. Duis et tortor eu arcu euismod lobortis vehicula in eros. Integer magna leo, feugiat et quam vel, ultrices porta nibh. In et imperdiet lorem. Fusce feugiat facilisis nulla, vel malesuada dui pretium hendrerit. Vestibulum vel mauris vitae nisi vestibulum dictum vel non sapien. Proin euismod ac turpis et lacinia. Proin ac sodales nisi. Proin nec tortor tortor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent lacinia justo a ligula gravida adipiscing. ";
+
+var alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+var clrObj = function(color, letter) {
+    this.color = color;
+    this.letter = letter;
+};
+
+var letterPointer = 0;
+
 window.onload = function() {
     init();
+
+    for (i = 0; i < alphabet.length; i++) {
+        var test = new clrObj(getRandomColor(), alphabet[i]);
+        clrObjArray.push(test);
+    }
+
+    clrObjArray.push(new clrObj("#FFFFFF", " "));
+    clrObjArray.push(new clrObj("#000000", "."));
+
 };
 
 function init() {
     Painting.init();
 
     // Runs the draw function every 50 ms 
-    timer = setInterval(draw, 1000);
+    timer = setInterval(draw, 50);
+    colorTimer = setInterval(addColor, 50);
+}
+
+function addColor() {
+    if (letterPointer < str.length)
+    {
+        var char = str[letterPointer];
+
+        for (i = 0; i < clrObjArray.length; i++) {
+            if (char === clrObjArray[i].letter) {
+                colorArray.push(clrObjArray[i].color);
+            }
+        }
+
+        letterPointer++;
+    }
+    else
+    {
+        colorArray = [];
+        count = 0;
+        letterPointer = 0;
+    }
 }
 
 function getRandomColor() {
@@ -32,18 +78,34 @@ var Painting = {
     redraw: function() {
         // Setting up the canvas
         var ctx = this.ctx = this.canvas.getContext('2d');
-        
-        
+
+
         var colLength = this.content[0] / TILE_WIDTH;
         var rowLength = this.content[1] / TILE_HEIGHT;
-        
-        for (col = 0; col < colLength; col++) {
-            for (row = 0; row < rowLength; row++) {
-                ctx.fillStyle = getRandomColor();
+
+        var count = 0;
+
+        for (row = 0; row < rowLength; row++) {
+            for (col = 0; col < colLength; col++) {
+
+                if (count < colorArray.length)
+                {
+                    ctx.fillStyle = colorArray[count];
+                }
+                else
+                {
+                    ctx.fillStyle = "#6f8ed9";
+
+                }
+
                 ctx.fillRect(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+
+                count++;
             }
         }
-        
+
+
+
         this.reflow();
     },
     init: function() {
