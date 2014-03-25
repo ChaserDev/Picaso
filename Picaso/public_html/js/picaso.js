@@ -13,7 +13,7 @@ var stringTimer;
 var colorPool = [];
 var colorCharMap = [];
 //
-var textFeed = "";
+///var textFeed = "hello";
 
 var charPointer = 0;
 
@@ -22,7 +22,7 @@ window.onload = function() {
 
     // Functions from Tim
     //setColorArray(colorArray, searchTag);
-    //appendToStringArray(stringArray, searchTag);
+    appendToStringArray("textFeed", "dunedin");
 
     // For testing purposes
     var alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -41,13 +41,14 @@ function init() {
     // Runs the draw function every 50 ms 
     timer = setInterval(draw, 50);
     colorTimer = setInterval(addColor, 50);
-    stringTimer = setInterval(addChar, 500);
+    //stringTimer = setInterval(addChar, 500);
 }
 
 // Adds a color to the colorpool
 function addColor() {
     // When I am at the end of the str array I will sort all the colors in the color array
     if (charPointer < textFeed.length) {
+        console.log(textFeed);
         var char = textFeed[charPointer]; // points to a position in the string array
         colorPool.push(colorCharMap[char]);
 

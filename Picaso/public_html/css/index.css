@@ -1,5 +1,5 @@
 body {
-    
+
     background-image: url('../op.jpg');
     background-repeat: no-repeat;
     background-position: 50% 50%; /* image centered on screen */
@@ -33,13 +33,13 @@ html, body {
 #slider {
     background-color: white;
     width: auto;
-    height: 32px;
+    height: 64px;
     //height: 100%;
     padding: 16px -1px 0px 1px;
     margin-bottom: 5px;
     display: inline-block;
     position: absolute;
-    bottom: 0;
+    bottom: 50%;
     left: 0;
     z-index: 10;
 
@@ -62,10 +62,15 @@ html, body {
 
     border: 0;
 }*/
+#spinner:hover {
+    -ms-transform: rotate(30deg); /* IE 9 */
+    -webkit-transform: rotate(30deg); /* Chrome, Safari, Opera */
+    transform: rotate(30deg);
+}
 
 #slider input { 
     border: 1px solid #c4c4c4; 
-    height: 32px; 
+    height: 64px; 
     width: 275px; 
     font-size: x-large; 
     text-indent: 16px;
