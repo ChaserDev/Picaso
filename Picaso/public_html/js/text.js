@@ -1,38 +1,61 @@
-// TIM OWNER
+/*
+*	Text Manager API for Picaso
+*
+*	
+*
+*
+*/
+
+
+//TextFeed is used to store the string recieved from the <insertname> API
 var textFeed = "";
-//converts a string to all lowercase and strips spaces and punctuation
-function appendToStringArray(string, tag) {
-console.log(string);
-//stub string/*
-var tempString = "";
 
 
-$.getJSON( "http://baconipsum.com/api/?type=meat-and-filler", function(result){
+/*
+	queries the <insertname> API for some text
+*/
+function fetchNewString() {
+
+//console.log(string);
+textFeed = "";
+
+
+$.getJSON( "http://baconipsum.com/api/?type=meat-and-filler", 
+
+	function(result) {
 	
 		$.each(result, function(key, val) {
-			tempString += (val);
+			textFeed += (val);
 		});
+		console.log("original: " + textFeed);
+		stripNonLetters()
+	});		
+}
+
+
+/*
+	Strips the punctuation, numbers, and spaces from textFeed 
+*/
+function stripNonLetters() {
+	
+	//string that holds only the characters from the stubstring
+	var outputString = '';
+
+	for (var i = 0; i < textFeed.length; i++)
+	{
+		var upperCaseChar = textFeed.charAt(i).toUpperCase();
+		var lowerCaseChar = textFeed.charAt(i).toLowerCase();
 		
-		//convert to lowercase
-		tempString = tempString.toLowerCase();
-
-		//string that holds only the characters from the stubstring
-		var outputString = '';
-
-		for (var i = 0; i < tempString.length; i++)
+		//compare the two chars, if they are different it is a character
+		if(upperCaseChar != lowerCaseChar)	
 		{
-			var upperCaseChar = tempString.charAt(i).toUpperCase();
-			var lowerCaseChar = tempString.charAt(i);
-		
-			//compare the two chars, if they are different it is a character
-			if(upperCaseChar != lowerCaseChar)	
-			{
                                 
-				textFeed += lowerCaseChar;
-                                //console.log(string);
-			}	
+			outputString += textFeed.charAt(i);
+            //console.log(string);
 		}	
-	});	
+	}	
+	textFeed = outputString;
+	console.log("stripped: " + textFeed);
 }
 
 
