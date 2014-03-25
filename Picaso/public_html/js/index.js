@@ -1,63 +1,69 @@
-var TILE_WIDTH = 8;
-var TILE_HEIGHT = 8;
+var TILE_WIDTH = 32;
+var TILE_HEIGHT = 32;
 //
 var timer;
 var colorTimer;
+var stringTimer;
 //
 var colorArray = [];
-var clrObjArray = [];
+var colorObjectArray = [];
 
-var str = "tLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut sem eros. Nunc libero lectus, fringilla at pretium non, blandit sed mi. Aenean porttitor ipsum a nibh euismod, in sollicitudin dolor accumsan. Duis et tortor eu arcu euismod lobortis vehicula in eros. Integer magna leo, feugiat et quam vel, ultrices porta nibh. In et imperdiet lorem. Fusce feugiat facilisis nulla, vel malesuada dui pretium hendrerit. Vestibulum vel mauris vitae nisi vestibulum dictum vel non sapien. Proin euismod ac turpis et lacinia. Proin ac sodales nisi. Proin nec tortor tortor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent lacinia justo a ligula gravida adipiscing. ";
+// Think of good name
+//var str = "tLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut sem eros. Nunc libero lectus, fringilla at pretium non, blandit sed mi. Aenean porttitor ipsum a nibh euismod, in sollicitudin dolor accumsan. Duis et tortor eu arcu euismod lobortis vehicula in eros. Integer magna leo, feugiat et quam vel, ultrices porta nibh. In et imperdiet lorem. Fusce feugiat facilisis nulla, vel malesuada dui pretium hendrerit. Vestibulum vel mauris vitae nisi vestibulum dictum vel non sapien. Proin euismod ac turpis et lacinia. Proin ac sodales nisi. Proin nec tortor tortor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent lacinia justo a ligula gravida adipiscing. ";
+var str;
 
 var alphabet = "abcdefghijklmnopqrstuvwxyz";
-
-var clrObj = function(color, letter) {
-    this.color = color;
-    this.letter = letter;
-};
 
 var letterPointer = 0;
 
 window.onload = function() {
+    //str = convertString();
+    
     init();
-
+    
+    //setColorArray(colorArray, searchTag);
+    //appendToStringArray(stringArray, searchTag);
+    //
+    // For testing purposes
     for (i = 0; i < alphabet.length; i++) {
-        var test = new clrObj(getRandomColor(), alphabet[i]);
-        clrObjArray.push(test);
+        colorObjectArray[alphabet[i]] = getRandomColor();
     }
-
-    clrObjArray.push(new clrObj("#FFFFFF", " "));
-    clrObjArray.push(new clrObj("#000000", "."));
-
+    colorObjectArray[' '] = "#000000";
+    colorObjectArray['.'] = "#000000";
+    colorObjectArray[','] = "#000000";
 };
 
 function init() {
+    
     Painting.init();
 
     // Runs the draw function every 50 ms 
     timer = setInterval(draw, 50);
     colorTimer = setInterval(addColor, 50);
+    stringTimer = setInterval(addChar, 1000);
 }
 
+// Adds a color to the colorpool
 function addColor() {
+    // When I am at the end of the str array I will sort all the colors in the color array
     if (letterPointer < str.length)
     {
-        var char = str[letterPointer];
+        var char = str[letterPointer]; // points to a position in the string array
 
-        for (i = 0; i < clrObjArray.length; i++) {
-            if (char === clrObjArray[i].letter) {
-                colorArray.push(clrObjArray[i].color);
-            }
-        }
+        colorArray.push(colorObjectArray[char]);
 
         letterPointer++;
     }
     else
     {
-        colorArray = [];
-        count = 0;
-        letterPointer = 0;
+        colorArray.sort();
     }
+}
+
+function addChar() {
+    // Get new text 
+    // 
+    str += "a";//string.charAt(Math.floor(Math.random()*10)+100);
 }
 
 function getRandomColor() {
@@ -77,7 +83,7 @@ function draw() {
 var Painting = {
     redraw: function() {
         // Setting up the canvas
-        var ctx = this.ctx = this.canvas.getContext('2d');
+        var ctx = this.ctx;// = this.canvas.getContext('2d');
 
 
         var colLength = this.content[0] / TILE_WIDTH;
@@ -90,11 +96,11 @@ var Painting = {
 
                 if (count < colorArray.length)
                 {
-                    ctx.fillStyle = colorArray[count];
+                    ctx.fillStyle = colorArray[count]; // Draw color
                 }
                 else
                 {
-                    ctx.fillStyle = "#6f8ed9";
+                    ctx.fillStyle = "#000000"; // Black
 
                 }
 
@@ -103,8 +109,6 @@ var Painting = {
                 count++;
             }
         }
-
-
 
         this.reflow();
     },
