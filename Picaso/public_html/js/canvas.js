@@ -10,28 +10,52 @@ var Canvas = {
 
         //ctx.drawImage(this.polytech, 0, 0, this.polytech.width, this.polytech.height);
 
-        for (row = 0; row < rowLength; row++) {
-            for (col = 0; col < colLength; col++) {
-
-                if (count < colors.length)
-                {
-//                    ctx.shadowBlur = 15;//  shadow Blur
+//        for (row = 0; row < rowLength; row++) {
+//            for (col = 0; col < colLength; col++) {
 //
-//                    ctx.shadowColor = "#252525"; // shadow color
+//                if (count < colors.length)
+//                {
+////                    ctx.shadowBlur = 15;//  shadow Blur
+////
+////                    ctx.shadowColor = "#252525"; // shadow color
+//
+//
+//
+//                    ctx.fillStyle = colors[count]; // Draw color
+//                }
+//                else
+//                {
+//                    ctx.fillStyle = "#000000"; // Black
+//                }
+//
+//                ctx.fillRect(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+//
+//                count++;
+//            }
+//        }
 
+        //Black BG for the canvas
+        //translucent BG to show trail
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, c.width, c.height);
 
+        ctx.fillStyle = "#0F0"; //green text
+        //ctx.font = font_size + "px arial";
+        //looping over drops
+        for (var i = 0; i < drops.length; i++)
+        {
+            //a random chinese character to print
+            var text = chinese[Math.floor(Math.random() * chinese.length)];
+            //x = i*font_size, y = value of drops[i]*font_size
+            ctx.fillRect(i * TILE_WIDTH, drops[i] * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
 
-                    ctx.fillStyle = colors[count]; // Draw color
-                }
-                else
-                {
-                    ctx.fillStyle = "#000000"; // Black
-                }
+            //sending the drop back to the top randomly after it has crossed the screen
+            //adding a randomness to the reset to make the drops scattered on the Y axis
+            if (drops[i] * font_size > c.height && Math.random() > 0.975)
+                drops[i] = 0;
 
-                ctx.fillRect(col * TILE_WIDTH, row * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-
-                count++;
-            }
+            //incrementing Y coordinate
+            drops[i]++;
         }
 
         this.reflow();
@@ -46,8 +70,8 @@ var Canvas = {
 
         // Setting up the canvas
         var ctx = this.ctx = this.canvas.getContext('2d');
-        this.polytech = new Image();
-        this.polytech.src = "op.jpg";
+//        this.polytech = new Image();
+//        this.polytech.src = "op.jpg";
 
 
         ctx.shadowBlur = 15;
@@ -61,6 +85,13 @@ var Canvas = {
         ctx.globalAlpha = 0.5;// opacity at 0.5
         ctx.fillStyle = '#6f8ed9';
         ctx.fillRect(0, 0, this.content[0], this.content[1]);
+
+        this.columns = this.content[0] / TILE_WIDTH;
+        this.drops = [];
+//x below is the x coordinate
+//1 = y co-ordinate of the drop(same for every drop initially)
+        for (var x = 0; x < this.columns; x++)
+            this.drops[x] = 1;
 
 
         // Create image on click

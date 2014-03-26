@@ -3,8 +3,8 @@
 
 // Accessing from color.js
 //setColorArray(colorObjectArray, searchTerm); // will slowly fill over time
-var TILE_WIDTH = 16;
-var TILE_HEIGHT = 16;
+var TILE_WIDTH = 10;
+var TILE_HEIGHT = 10;
 //
 var timer;
 var colorTimer;
@@ -51,6 +51,7 @@ function addColor() {
         console.log(textFeed);
         var char = textFeed[charPointer]; // points to a position in the string array
         colorPool.push(colorCharMap[char]);
+        //colorPool.push(getColor(char));
 
         charPointer++;
     }
