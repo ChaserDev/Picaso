@@ -1,15 +1,14 @@
-/*
-*	Text Manager API for Picaso
-*
-*	
-*
-*
-*/
+/********************************
+	text.js
+********************************/
 
 
 //TextFeed is used to store the string recieved from the <insertname> API
 var textFeed = "";
 
+/*************************************************************
+	color.js initialization.  Must be called by window.onload
+*************************************************************/
 function textInit() {
 
 	fetchNewString();

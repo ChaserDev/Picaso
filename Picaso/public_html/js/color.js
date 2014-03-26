@@ -1,27 +1,89 @@
 
 // TIM OWNER
+var R = "0";	
+var B = "1";
+var G = "2";
 
-var colorArray;
 var ALPHABET_LENGTH = 26;
 var NUMBER_LENGTH = 10;
 var LOWER_CASE_START = 97;
 var UPPER_CASE_START = 65;
+var NUMBER_START = 48;
+var COLOR_ARRAY_LENGTH = 63;
 
+var colorArray;
+var rgbArray;
+
+/*************************************************************
+	color.js initialization.  Must be called by window.onload
+*************************************************************/
 function colorInit() {
 
 	colorArray = [];
+	
+	colorArray["other"] = "#000000";
+	
+	rgbArray = [];
+	rgbArray.length = 3;
+	
 	createStaticArray();
 	createDynamicArray();
 	
 }
 
+/***************************************
+	creates the initial array of colors
+***************************************/
 function createStaticArray() {
 
-
-
+	//add colors to lower case letters
+	for(var i = LOWER_CASE_START; i < ALPHABET_LENGTH; i++) {
+		
+		addRandomColorToColorArray(String.fromCharCode(i);
+	}	
+	
+	//add colors to upper case letters
+	for(var i = UPPER_CASE_START; i < ALPHABET_LENGTH; i++) {
+		
+		addRandomColorToColorArray(String.fromCharCode(i);
+	}
+	
+	//add colors to numbers
+	for(var i = NUMBER_START; I < NUMBER_LENGTH; i++) {
+		
+		addRandomColorToColorArray(String.fromCharCode(i);
+	}
 }
 
-function createDynamicArray();
+/*****************************************************************
+	adds a random color to the color array at the given parameter
+*****************************************************************/
+function addRandomColorToColorArray(charCode) {
+
+	//generate a random hexadecimal color
+	for(var value in rgbArray) {
+		
+		//get a random number
+		value = Math.floor(Math.random()*256);
+		
+		//convert to hex
+		value = value.toString(16);
+		
+		//append a 0 if the hex needs padding
+		value = value.length == 1 ? "0" + value : value;
+	}
+	
+	//create a color with the random hex values in rgbArray
+	colorArray[charCode] = "#" + rgbArray[R] + rgbArray[B] + rgbArray[G];	
+}
+
+/*
+	creates an array of colors which consist of 
+	the dominant color of recent instagram images
+*/
+function createDynamicArray() {
+
+}
 
 function setColorArray(colorObjectArray, searchTerm) {
     
