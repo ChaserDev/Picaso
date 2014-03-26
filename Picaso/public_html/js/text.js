@@ -12,9 +12,8 @@ var textFeed = "";
 
 function textInit() {
 
-	fetchNewString
+	fetchNewString();
 }
-
 /*
 	queries the <insertname> API for some text
 */
