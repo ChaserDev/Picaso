@@ -10,6 +10,10 @@
 //TextFeed is used to store the string recieved from the <insertname> API
 var textFeed = "";
 
+function textInit() {
+
+	fetchNewString
+}
 
 /*
 	queries the <insertname> API for some text
