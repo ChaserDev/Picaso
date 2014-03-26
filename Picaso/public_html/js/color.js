@@ -61,7 +61,7 @@ function addRandomColorToColorArray(charCode) {
 		value = Math.floor(Math.random()*256);
 		
 		value = performHexConversion(value);
-		
+		rgbArray[i] = value;
 	}
 	
 	//create a color with the random hex values in rgbArray
