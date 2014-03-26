@@ -4,27 +4,30 @@ var R = "0";
 var B = "1";
 var G = "2";
 
+var ALL_CHARS = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 var ALPHABET_LENGTH = 26;
 var NUMBER_LENGTH = 10;
 var LOWER_CASE_START = 97;
 var UPPER_CASE_START = 65;
 var NUMBER_START = 48;
 var COLOR_ARRAY_LENGTH = 63;
+//var URL = "https://api.instagram.com/v1/tags/random/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11"
+var URL = "https://api.instagram.com/v1/tags/love/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
 
 var colorArray;
-var rgbArray;
+var colorArrayCounter;
+var imageArray;
 
 /*************************************************************
 	color.js initialization.  Must be called by window.onload
 *************************************************************/
 function colorInit() {
 
-	colorArray = [];
-	
+	colorArray = [];	
 	colorArray["other"] = "#000000";
 	
-	rgbArray = [];
-	rgbArray.length = 3;
+	imageArrayPointer = 0;
 	
 	createStaticArray();
 	createDynamicArray();
@@ -36,23 +39,12 @@ function colorInit() {
 ***************************************/
 function createStaticArray() {
 
+	var charArray = ALL_CHARS.split('');
 	//add colors to lower case letters
-	for(var i = LOWER_CASE_START; i < ALPHABET_LENGTH; i++) {
-		
-		addRandomColorToColorArray(String.fromCharCode(i);
+	for(var i = 0; i < ALL_CHARS.length; i++) {
+		addRandomColorToColorArray(charArray[i]);
 	}	
-	
-	//add colors to upper case letters
-	for(var i = UPPER_CASE_START; i < ALPHABET_LENGTH; i++) {
-		
-		addRandomColorToColorArray(String.fromCharCode(i);
-	}
-	
-	//add colors to numbers
-	for(var i = NUMBER_START; I < NUMBER_LENGTH; i++) {
-		
-		addRandomColorToColorArray(String.fromCharCode(i);
-	}
+	console.log("static array done");
 }
 
 /*****************************************************************
@@ -60,33 +52,123 @@ function createStaticArray() {
 *****************************************************************/
 function addRandomColorToColorArray(charCode) {
 
+	var rgbArray = [];
+	
 	//generate a random hexadecimal color
-	for(var value in rgbArray) {
+	for(var i = 0; i < 3; i++) {
 		
 		//get a random number
 		value = Math.floor(Math.random()*256);
 		
-		//convert to hex
-		value = value.toString(16);
+		value = performHexConversion(value);
 		
-		//append a 0 if the hex needs padding
-		value = value.length == 1 ? "0" + value : value;
 	}
 	
 	//create a color with the random hex values in rgbArray
 	colorArray[charCode] = "#" + rgbArray[R] + rgbArray[B] + rgbArray[G];	
 }
 
+function performHexConversion(value) {
+	
+	//convert to hex
+	value = value.toString(16);
+		
+	//append 0 if the hex needs padding
+	value = value.length == 1 ? "0" + value : value;
+	
+	if(value.length > 2)
+		alert(value);
+	
+	return value;
+}
+
+/*
+	gets images from instagram
+*/
+function fetchImages() {
+	console.log("fetching images");
+	$.getJSON(URL, 		
+		function(result) {
+			
+			imageArray = [];
+			
+			$.each(result.data, function(key, value) {				
+				
+				imageArray.push(value.images.low_resolution.url);
+			});
+			
+			fetchImageColors(0);
+		});
+
+}
+
+function fetchImageColors(iteration){
+	console.log("fetching image colors");
+	var imageURL = imageArray[iteration];	
+	
+	$.getImageData({
+		url: imageURL,				
+		success: function(image) {	
+				
+				
+			var charArray = ALL_CHARS.split('');
+			var colorThief = new ColorThief();					
+			var rgbArray = colorThief.getColor(image);	
+			
+			for(var i = 0; i < 3; i++) {
+			
+				value = performHexConversion(value);
+			}
+			//create a color with the random hex values in rgbArray
+			var color = "#" + rgbArray[R] + rgbArray[B] + rgbArray[G];	
+					
+			colorArray[charArray[colorArrayCounter]] = color;						
+			
+			//increment colorArrayCounter
+			colorArrayCounter++;
+			console.log(colorArrayCounter);
+			//check if colorArray needs more colors
+			if(colorArrayCounter < ALL_CHARS.length)
+			{
+				//increment iteration
+				iteration++;
+				
+				//check if the iteration has reached its end
+				if(iteration == imageArray.length){
+				
+					//if it has, fetch more images
+					fetchImages();
+				}
+				else{
+					fetchImageColors(iteration);
+				}
+			}
+			else {
+				//reset the colorArrayCounter
+				colorArrayCounter = 0;
+				listColors();
+			}
+		},
+			error: function(xhr, text_status) {
+			console.log("fail");
+			console.log(xhr);
+		}	
+	});
+}
+
+//DELETEME!!!
+function listColors() {
+	console.log("T: " + colorArray["T"]);
+	console.log("1: " + colorArray["1"]);
+	console.log("m: " + colorArray["m"]);
+}
 /*
 	creates an array of colors which consist of 
 	the dominant color of recent instagram images
 */
 function createDynamicArray() {
-
-}
-
-function setColorArray(colorObjectArray, searchTerm) {
-    
+	colorArrayCounter = 0;
+	fetchImages();
 }
 
 function getColor(c) {
@@ -96,73 +178,3 @@ function getColor(c) {
 	
 	//return colorArray[adamsChar]
 }
-/*
-// For testing purposes
-    var alphabet = "abcdefghijklmnopqrstuvwxyz";
-    for (i = 0; i < alphabet.length; i++) {
-        colorCharMap[alphabet[i]] = getRandomColor();
-    }
-    colorCharMap[' '] = "#000000";
-    colorCharMap['.'] = "#000000";
-    colorCharMap[','] = "#000000";
-	console.log("textFeed: " + textFeed);
-	
-	var R = 0;
-	
-	
-var B = 1;
-var G = 2;
-var colorArray;
-var imageArray;
-var myTimer;
-
-var paletteReady;
-
-//array should be an array of image urls
-function setColorArray(array) {
-	paletteReady = false;
-	colorArray = new Array();
-	imageArray = array;
-	console.log("getting colors...");
-	ConvertToColor(0);
-}
-
-
-//My first recursive function!!!
-function ConvertToColor(iteration)
-{	
-	var pos = iteration % imageArray.length;		
-	var imageURL = imageArray[pos];	
-	
-		$.getImageData({
-				url: imageURL,				
-				success: function(image) {	
-				
-						
-					//choose the character to index the next color based on the iteration
-					var chr = String.fromCharCode(97 + iteration);		
-					
-					var colorThief = new ColorThief();					
-					var colorRGB = colorThief.getColor(image);	
-					var color = "rgb(" + colorRGB[R] + "," + colorRGB[B] + "," + colorRGB[G] + ")";	
-					
-					colorArray[chr] = color;	
-					console.log("character: " +  chr + " image_url: " + imageArray[pos] + " color: " + colorArray[chr]);
-					
-					//increment iteration
-					iteration++;
-					//check if the iteration has reached its end
-					if(iteration == 26){
-						alert("color palette is ready, press draw to preview");	
-						paletteReady = true;
-					}
-					else{
-						ConvertToColor(iteration);
-					}
-				},
-					error: function(xhr, text_status) {
-					console.log("fail");
-					console.log(xhr);
-				}	
-			});
-}*/
