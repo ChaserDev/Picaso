@@ -1,24 +1,54 @@
-/********************************
-	text.js
+/******************************** http://en.wikipedia.org/w/api.php?action=query&titles=Foo&prop=extracts
+	text.js						  https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&titles=Albert%20Einstein&format=jsonfm	
 ********************************/
 
+//domain name prefix for the languages with the most wiki articles.
+var ENGLISH = "en";
+var FRENCH = "fr";
+var GERMAN = "de";
+var SPANISH = "es";
+var RUSSIAN = "ru";
+var ITALIAN = "it";
+var SWEDISH = "sv";
+var DUTCH = "nl";
+var POLISH = "pl";
+
+//the protocol used to call the api
+var TEXT_JS_HTTP = "http://";
+
+var TEXT_JS_API = ".wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=";
 
 //TextFeed is used to store the string recieved from the <insertname> API
 var textFeed = "";
-
+window.onload = textInit;
 /*************************************************************
-	color.js initialization.  Must be called by window.onload
+	test.js initialization.  Must be called by window.onload
 *************************************************************/
 function textInit() {
 
-	fetchNewString();
+	//fetchIpsum();
+	fetchWiki("love", ENGLISH);
 }
-/*
-	queries the <insertname> API for some text
-*/
-function fetchNewString() {
 
-//console.log(string);
+function fetchWiki(suffix, prefix) {
+
+	var url = "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=love";
+	
+	$.getJSON(url, function(result) {
+	
+		console.log(JSON.stringify(result));
+		
+		var string = JSON.stringify(result.query.pages);
+		var index = string.indexOf('extract":"');
+		$("#displayArea").text(string.substring(index + 10, string.length - 6));
+	});
+}
+
+/*
+	queries the baconipsum API for some text
+*/
+function fetchIpsum() {
+
 textFeed = "";
 
 
@@ -30,7 +60,7 @@ $.getJSON( "http://baconipsum.com/api/?type=meat-and-filler",
 			textFeed += (val);
 		});
 		console.log("original: " + textFeed);
-		stripNonLetters()
+	//	stripNonLetters();
 	});		
 }
 
