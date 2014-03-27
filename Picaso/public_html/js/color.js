@@ -1,5 +1,3 @@
-
-// TIM OWNER
 var R = "0";	
 var B = "1";
 var G = "2";
@@ -18,6 +16,8 @@ var URL = "https://api.instagram.com/v1/tags/love/media/recent?callback=?&amp;cl
 var colorArray;
 var colorArrayCounter;
 var imageArray;
+
+var colorArrayReady;
 
 /*************************************************************
 	color.js initialization.  Must be called by window.onload
@@ -84,6 +84,7 @@ function performHexConversion(value) {
 */
 function fetchImages() {
 	console.log("fetching images");
+	
 	$.getJSON(URL, 		
 		function(result) {
 			
@@ -100,7 +101,11 @@ function fetchImages() {
 }
 
 function fetchImageColors(iteration){
+	
+	
+	
 	console.log("fetching image colors");
+	
 	var imageURL = imageArray[iteration];	
 	
 	$.getImageData({
@@ -143,6 +148,8 @@ function fetchImageColors(iteration){
 			else {
 				//reset the colorArrayCounter
 				colorArrayCounter = 0;
+				//set the colorArrayReady flag to true
+				colorArrayReady = true;
 				listColors();
 			}
 		},
@@ -165,6 +172,9 @@ function listColors() {
 	the dominant color of recent instagram images
 */
 function createDynamicArray() {
+
+	colorArrayReady =false;
+	
 	colorArrayCounter = 0;
 	fetchImages();
 }
