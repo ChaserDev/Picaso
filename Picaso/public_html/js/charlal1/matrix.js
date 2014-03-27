@@ -7,7 +7,7 @@ var charPointer = 0;
 // Initial charset
 var feed = "Otago Polytech";
 var hashtag = "";
-var font_size = 100;
+var font_size = 10;
 //var columns = c.width / font_size; //number of columns for the rain
 //an array of drops - one per column
 var drops = [];
@@ -74,7 +74,8 @@ function draw() {
         context.fillStyle = getColor(char);//getRandomColor();//"#0F0"; //green text
         // Draw to the canvas
         //context.fillText(char, i * font_size, drops[i] * font_size);
-        context.fillRect(i * font_size, drops[i] * font_size, font_size, font_size);
+        //context.fillRect(i * font_size, drops[i] * font_size, font_size, font_size);
+        context.fillRect(drops[i] * font_size, i * font_size,  font_size, font_size);
         // Send the drop back to the top randomly after it has crossed the screen
         // adding randomness to the reset to make the drops scattered on the Y axis
         //if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
