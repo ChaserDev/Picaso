@@ -76,9 +76,6 @@ function performHexConversion(value) {
 	//append 0 if the hex needs padding
 	value = value.length == 1 ? "0" + value : value;
 	
-	if(value.length > 2)
-		alert(value);
-	
 	return value;
 }
 
@@ -152,6 +149,7 @@ function fetchImageColors(iteration){
 			error: function(xhr, text_status) {
 			console.log("fail");
 			console.log(xhr);
+			
 		}	
 	});
 }
@@ -173,9 +171,19 @@ function createDynamicArray() {
 
 function getColor(c) {
 	//do some stuff here
-	//if adamsChar is not in array
-	//return dwfaultColor
-	//else
+	var returnColor = "#000000";
 	
+	var regex = /^[0-9a-zA-Z]+$/;
+
+	if(regex.test(c))
+	{
+		returnColor = colorArray[c];
+	}
+	else
+	{
+		returnColor = colorArray['other'];
+	}
+	
+	return returnColor;
 	//return colorArray[adamsChar]
 }
