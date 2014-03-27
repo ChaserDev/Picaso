@@ -15,8 +15,11 @@ var POLISH = "pl";
 
 //the protocol used to call the api
 var TEXT_JS_HTTP = "http://";
-
 var TEXT_JS_API = ".wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=";
+var JSON_INDEX_SUBSTRING = 'extract":"';
+var JSON_START_SUBSTRING = 10;
+var JSON_END_SUBSTRING = 6;
+
 
 //TextFeed is used to store the string recieved from the <insertname> API
 var textFeed = "";
@@ -26,21 +29,21 @@ window.onload = textInit;
 *************************************************************/
 function textInit() {
 
-	//fetchIpsum();
-	fetchWiki("love", ENGLISH);
+	fetchIpsum();	
 }
 
 function fetchWiki(suffix, prefix) {
-
-	var url = "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=love";
+	
+	textFeed = "";
+	var url = TEXT_JS_HTTP + prefix + TEXT_JS_API + suffix;
+	//"http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=love";
 	
 	$.getJSON(url, function(result) {
 	
-		console.log(JSON.stringify(result));
-		
 		var string = JSON.stringify(result.query.pages);
-		var index = string.indexOf('extract":"');
-		$("#displayArea").text(string.substring(index + 10, string.length - 6));
+		var index = string.indexOf(JSON_INDEX_SUBSTRING);
+		textFeed = string.substring(index + JSON_START_SUBSTRING, string.length - JSON_END_SUBSTRING);
+		console.log(textFeed);
 	});
 }
 
@@ -59,8 +62,7 @@ $.getJSON( "http://baconipsum.com/api/?type=meat-and-filler",
 		$.each(result, function(key, val) {
 			textFeed += (val);
 		});
-		console.log("original: " + textFeed);
-	//	stripNonLetters();
+		console.log(textFeed);
 	});		
 }
 
