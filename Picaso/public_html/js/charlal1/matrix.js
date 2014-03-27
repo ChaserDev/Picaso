@@ -6,18 +6,27 @@ var textTimer;
 var charPointer = 0;
 // Initial charset
 var feed = "Otago Polytech";
-var font_size = 22;
+var hashtag = "";
+var font_size = 100;
 //var columns = c.width / font_size; //number of columns for the rain
 //an array of drops - one per column
 var drops = [];
 
-window.onload = function() {s
+window.onload = function() {
+    colorInit();
+    textInit();
     init();
-    timer = setInterval(draw, 33);
+    timer = setInterval(draw, 50);
     textTimer = setInterval(checkTextFeed, 100);
 };
 
 function init() {
+    var button = document.getElementById('go');
+    var input = document.getElementById('hashtag')
+    button.onclick = function() {
+        //alert(input.value);
+        fetchWiki(input.value,"fr");
+    };
     // Make canvas
     canvas = document.getElementById('c');
     context = canvas.getContext("2d");
@@ -29,7 +38,7 @@ function init() {
     // Converting the string into an array of single characters
     feed = feed.split("");
     // Initialize the textFeed from text.js
-    fetchNewString();
+    //fetchNewString();
 
     // Set column size;
     columns = c.width / font_size; //number of columns for the rain
@@ -48,8 +57,8 @@ function draw() {
     //context.clearRect(0, 0, canvas.width, canvas.height);
     //Black BG for the canvas
     //translucent BG to show trail
-    //ctx.fillStyle = "rgba(14, 70, 154, 0.25)"; // Blue background
-    context.fillStyle = "rgba(0, 0, 0, 0.05)";
+    context.fillStyle = "rgba(14, 70, 154, 0.05)"; // Blue background
+    //context.fillStyle = "rgba(0, 0, 0, 0.05)";
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.font = font_size + "px arial";
     //looping over drops
@@ -58,17 +67,19 @@ function draw() {
         if(charPointer >= feed.length)
             charPointer = 0;
     
-        context.fillStyle = getRandomColor();//"#0F0"; //green text
+        
         // Random character to print
         //var char = feed[Math.floor(Math.random() * feed.length)];
         var char = feed[charPointer];
+        context.fillStyle = getColor(char);//getRandomColor();//"#0F0"; //green text
         // Draw to the canvas
-        context.fillText(char, i * font_size, drops[i] * font_size);
+        //context.fillText(char, i * font_size, drops[i] * font_size);
+        context.fillRect(i * font_size, drops[i] * font_size, font_size, font_size);
         // Send the drop back to the top randomly after it has crossed the screen
         // adding randomness to the reset to make the drops scattered on the Y axis
         //if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
         if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
-            drops[i] = 0;
+            drops[i] = -1;
 
         //incrementing Y coordinate
         drops[i]++;
