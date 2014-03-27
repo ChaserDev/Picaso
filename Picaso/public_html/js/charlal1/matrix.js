@@ -3,15 +3,15 @@ var context;
 var timer;
 var textTimer;
 
-
+var charPointer = 0;
 // Initial charset
-var feed = "";
-var font_size = 12;
+var feed = "Otago Polytech";
+var font_size = 22;
 //var columns = c.width / font_size; //number of columns for the rain
 //an array of drops - one per column
 var drops = [];
 
-window.onload = function() {
+window.onload = function() {s
     init();
     timer = setInterval(draw, 33);
     textTimer = setInterval(checkTextFeed, 100);
@@ -44,6 +44,8 @@ function init() {
 
 //drawing the characters
 function draw() {
+    // Clears the rectangle on each draw
+    //context.clearRect(0, 0, canvas.width, canvas.height);
     //Black BG for the canvas
     //translucent BG to show trail
     //ctx.fillStyle = "rgba(14, 70, 154, 0.25)"; // Blue background
@@ -53,9 +55,13 @@ function draw() {
     //looping over drops
     for (var i = 0; i < drops.length; i++)
     {
+        if(charPointer >= feed.length)
+            charPointer = 0;
+    
         context.fillStyle = getRandomColor();//"#0F0"; //green text
         // Random character to print
-        var char = feed[Math.floor(Math.random() * feed.length)];
+        //var char = feed[Math.floor(Math.random() * feed.length)];
+        var char = feed[charPointer];
         // Draw to the canvas
         context.fillText(char, i * font_size, drops[i] * font_size);
         // Send the drop back to the top randomly after it has crossed the screen
@@ -66,6 +72,8 @@ function draw() {
 
         //incrementing Y coordinate
         drops[i]++;
+        // Increment char pointer
+        charPointer++;
     }
 }
 
