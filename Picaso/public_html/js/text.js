@@ -59,6 +59,21 @@ function stripNonLetters() {
 	textFeed = outputString;
 	console.log("stripped: " + textFeed);
 }
+/*
 
+http://www.developerdrive.com/2012/03/a-simple-way-to-add-free-news-content-to-your-website/
+
+
+http://stackoverflow.com/questions/10943544/how-to-parse-a-rss-feed-using-javascript
+
+
+http://stackoverflow.com/questions/226663/parse-rss-with-jquery
+
+
+
+
+
+
+*/
 
 

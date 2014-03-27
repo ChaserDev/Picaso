@@ -172,6 +172,7 @@ function createDynamicArray() {
 }
 
 function getColor(c) {
+	//do some stuff here
 	//if adamsChar is not in array
 	//return dwfaultColor
 	//else
