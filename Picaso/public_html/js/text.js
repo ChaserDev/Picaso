@@ -1,6 +1,6 @@
-/******************************** http://en.wikipedia.org/w/api.php?action=query&titles=Foo&prop=extracts
-	text.js						  https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&titles=Albert%20Einstein&format=jsonfm	
-********************************/
+/*
+		text.js						 
+*/
 
 //domain name prefix for the languages with the most wiki articles.
 var ENGLISH = "en";
@@ -13,34 +13,46 @@ var SWEDISH = "sv";
 var DUTCH = "nl";
 var POLISH = "pl";
 
-//the protocol used to call the api
 var TEXT_JS_HTTP = "http://";
 var TEXT_JS_API = ".wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=";
 var JSON_INDEX_SUBSTRING = 'extract":"';
 var JSON_START_SUBSTRING = 10;
 var JSON_END_SUBSTRING = 6;
 
-
 //TextFeed is used to store the string recieved from the <insertname> API
 var textFeed = "";
 window.onload = textInit;
+
 /*************************************************************
 	test.js initialization.  Must be called by window.onload
 *************************************************************/
 function textInit() {
-
 	fetchIpsum();	
 }
 
+/*	
+	fetchWiki sets the textFeed to a block of text from the wikipedia API
+	
+	Parameters:
+
+	-suffix: defines the title that you would like to search for.
+	-prefix: the language of the wiki page to be returned.  the nine wiki languages
+	         with the most articles are defined at the top of this file.
+	
+	TODO: 
+		
+	-error checking for when the page doesn't exist.
+	-might have to convert words from english into the search language before searching.
+*/
 function fetchWiki(suffix, prefix) {
 	
 	textFeed = "";
 	var url = TEXT_JS_HTTP + prefix + TEXT_JS_API + suffix;
-	//"http://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&exchars=1000&callback=?&titles=love";
 	
 	$.getJSON(url, function(result) {
 	
 		var string = JSON.stringify(result.query.pages);
+		console.log(string);
 		var index = string.indexOf(JSON_INDEX_SUBSTRING);
 		textFeed = string.substring(index + JSON_START_SUBSTRING, string.length - JSON_END_SUBSTRING);
 		console.log(textFeed);
