@@ -50,11 +50,11 @@ function init() {
     var button = document.getElementById('gGo');
     button.onclick = go;
 
-    initCanvas();    
-    resetSquares();    
+    canvasInit();    
+    squaresReset();    
 
     timer = setInterval(draw, DRAW_RENDER_SPEED);
-    textTimer = setInterval(checkTextFeed, TEXT_CHECK_INTERVAL);
+    textTimer = setInterval(textFeedCheck, TEXT_CHECK_INTERVAL);
 }
 
 /*************************************************************
@@ -69,13 +69,13 @@ function go() {
     fetchWiki(search.value, language.value);
     resetSquares();
 
-    textTimer = setInterval(checkTextFeed, TEXT_CHECK_INTERVAL);
+    textTimer = setInterval(textFeedCheck, TEXT_CHECK_INTERVAL);
 }
 
 /*************************************************************
 	Setup the canvas for the drawing
 *************************************************************/
-function initCanvas() {
+function canvasInit() {
     // Make canvas
     canvas = document.getElementById('c');
     context = canvas.getContext("2d");
@@ -128,7 +128,7 @@ function draw() {
 /*************************************************************
 	Error checking if something is in the textFeed
 *************************************************************/
-function checkTextFeed() {
+function textFeedCheck() {
     if (textFeed !== "") {
         textFeed.split("");
         // Add  to drawing text feed
@@ -141,7 +141,7 @@ function checkTextFeed() {
 /*************************************************************
 	Resets to initial value at the top of the screen
 *************************************************************/
-function resetSquares() {
+function squaresReset() {
     charPointer = 0;
     //x below is the x coordinate
     //1 = y co-ordinate of the square(same for every square initially)
