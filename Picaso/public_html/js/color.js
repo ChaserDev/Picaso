@@ -10,8 +10,12 @@ var LOWER_CASE_START = 97;
 var UPPER_CASE_START = 65;
 var NUMBER_START = 48;
 var COLOR_ARRAY_LENGTH = 63;
-//var URL = "https://api.instagram.com/v1/tags/random/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11"
-var URL = "https://api.instagram.com/v1/tags/love/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
+var DEFAULT_TAG_SEARCH = "otago";
+var COLOR_JS_API_PREFIX = "https://api.instagram.com/v1/tags/";
+var COLOR_JS_API_SUFFIX = "/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
+
+var myURL;
+var nextURL;
 
 var colorArray;
 var colorArrayCounter;
@@ -24,13 +28,14 @@ var colorArrayReady;
 *************************************************************/
 function colorInit() {
 	sessionChars = DEFAULT_CHARS;
+		
 	colorArray = [];	
 	colorArray["other"] = "#000000";
 	
 	imageArrayPointer = 0;
-	
 	createStaticArray();
-	createDynamicArray();
+	
+	newImageSearch(DEFAULT_TAG_SEARCH);
 	
 }
 
@@ -83,21 +88,40 @@ function performHexConversion(value) {
 	NOTE: next url for images  = JSON.pagination.next_url
 */
 function fetchImages() {
-	console.log("fetching images");
+	console.log("image url: " + myURL);
 	
-	$.getJSON(URL, 		
-		function(result) {
+	$.getJSON(myURL, 		
+		function(result) {		
 			
-			imageArray = [];
+			if(result.data.length > 0) {
 			
-			$.each(result.data, function(key, value) {				
-				
-				imageArray.push(value.images.low_resolution.url);
-			});
+				imageArray = [];
+				nextURL = processNextUrl( result.pagination.next_url);	
+			
+				$.each(result.data, function(key, value) {								
+					imageArray.push(value.images.low_resolution.url);
+				});
 			
 			fetchImageColors(0);
+			}
+			else  {
+				newImageSearch(DEFAULT_TAG_SEARCH);
+			}				
+		})
+		.fail(function(xhr, status, error){
+		
+			console.log(status);
 		});
 
+}
+
+function processNextUrl(url) {
+	var returnURL;
+	var startIndex = url.indexOf("callback=");
+	var endIndex = url.indexOf("&");
+	returnURL = url.substring(0, startIndex + 9) + "?" + url.substring(endIndex);	
+	console.log("next URL: " + returnURL);
+	return returnURL;
 }
 
 function fetchImageColors(iteration){
@@ -146,6 +170,7 @@ function fetchImageColorsTurnaround(iteration) {
 		if(iteration == imageArray.length){
 				
 			//if it has, fetch more images
+			myURL = nextURL;
 			fetchImages();
 		}
 		else{
@@ -161,7 +186,21 @@ function fetchImageColorsTurnaround(iteration) {
 	}
 }
 
-
+function newImageSearch(newTag) {
+	
+	
+	//strip white space from given tag
+	var tag = "";
+	for(var c in newTag) {
+		
+		if(newTag[c] != ' ') {
+			tag += newTag[c];
+		}		
+	}
+	console.log("new tag: " + tag);	
+	myURL = buildMyURL(tag);		
+	createDynamicArray();
+}
 //DELETEME!!!
 function listColors() {
 	console.log("T: " + getColor("T"));
@@ -180,6 +219,9 @@ function createDynamicArray() {
 	fetchImages();
 }
 
+function buildMyURL(tag) {
+	return COLOR_JS_API_PREFIX + tag + COLOR_JS_API_SUFFIX;
+}
 function getColor(c) {
 	//do some stuff here
 	var returnColor = colorArray['other'];
