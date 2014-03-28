@@ -60,12 +60,11 @@ function addRandomColorToColorArray(charCode) {
 		//get a random number
 		value = Math.floor(Math.random()*256);
 		
-		value = performHexConversion(value);
 		rgbArray[i] = value;
 	}
 	
 	//create a color with the random hex values in rgbArray
-	colorArray[charCode] = "#" + rgbArray[R] + rgbArray[B] + rgbArray[G];	
+	colorArray[charCode] = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G];	
 }
 
 function performHexConversion(value) {
@@ -116,13 +115,9 @@ function fetchImageColors(iteration){
 			var charArray = ALL_CHARS.split('');
 			var colorThief = new ColorThief();					
 			var rgbArray = colorThief.getColor(image);	
-			
-			for(var i = 0; i < 3; i++) {
-			
-				value = performHexConversion(value);
-			}
+						
 			//create a color with the random hex values in rgbArray
-			var color = "#" + rgbArray[R] + rgbArray[B] + rgbArray[G];	
+			var color = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G] +")";	
 					
 			colorArray[charArray[colorArrayCounter]] = color;						
 			
