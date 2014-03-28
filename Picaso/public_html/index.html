@@ -13,8 +13,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href="css/picaso.css" rel="stylesheet" />
-                
-        
+
+
         <script src="js/jquery-2.1.0.min.js"></script>
         <script src="js/jQueryRotate.js"></script>
         <script src="js/jquery.getimagedata.js"></script>
@@ -29,7 +29,16 @@
 
     <body>        
         <canvas id="c"></canvas>
-        <div id="input"><input type="search" placeholder="#hashtag" id="hashtag"><button id="go"><img src="search.png" width="32" height="32" alt="submit" border="0" /></button></div>
-        <div id="spinner"><img src="logo.png" alt="spinner" width="100" height="100" id="image"></div>
+        <div id="input">
+            <input type="text" placeholder="Search Wikipedia" id="hashtag">
+            <button id="go"><img src="search.png" width="32" height="32" alt="submit" border="0" /></button>
+            <select>
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+            </select>
+        </div>
+        <!--<div id="spinner"><img src="logo.png" alt="spinner" width="100" height="100" id="image"></div>-->
     </body>
 </html>

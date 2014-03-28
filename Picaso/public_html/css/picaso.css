@@ -58,7 +58,7 @@ input {
     border-radius: 3px; 
     border: none; 
     padding: 13px 10px; 
-    width:270px; 
+    width:470px; 
     margin-bottom: 20px; 
     box-shadow: inset 0px 2px 3px rgba( 0,0,0,0.1 ); 
     clear: both; 
@@ -68,3 +68,16 @@ input:focus {
     box-shadow: 0px 0px 0px 3px rgba(255,0,0,0.3), inset 0px 2px 3px rgba( 0,0,0,0.2 ), 0px 5px 5px rgba( 0,0,0,0.15 ); 
     outline: none;    
 } 
+
+select {
+   position: absolute;
+   background: transparent;
+   width: 268px;
+   padding: 5px;
+   font-size: 16px;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   height: 34px;
+   -webkit-appearance: none;
+   }
