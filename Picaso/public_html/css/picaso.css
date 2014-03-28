@@ -5,57 +5,72 @@ html, body {
     padding: 0;
     overflow: hidden;
 }
-
-#spinner {
-    display: block;
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    right: 20px;
-    bottom: 20px;
-}
-
-#input {
-    display: inline-block;
-    position: absolute;
-    width: auto;
-    height: auto;
-    left: 20px;
-    bottom: 10px;
-}
-
-#input input {
-    border-radius: 10px;
-    font-size: xx-large;
-    text-indent: 8px;
-}
-
-#input button {
-    position: absolute;
-    top: 15px;
-    right: 5px;
-    
+button {
+/*    position: absolute;
     font-size: xx-large;
     background-color: transparent;
-    //background-image: url(../search.png);
-    border: none;
-}
-
-input:-webkit-input-placeholder { 
-    color:    #b5b5b5; 
-} 
- 
-input-moz-placeholder { 
-    color:    #b5b5b5; 
-} 
- 
-input { 
-    background: #f5f5f5; 
-    //background-color:rgba(255,255,255,0.5);
-    font-size: 0.8rem; 
+    border: none;*/
+    background: #f5f5f5;     
+    font-size: xx-large;
     -moz-border-radius: 3px; 
     -webkit-border-radius: 3px; 
-    border-radius: 3px; 
+    border-radius: 10px;
+    font-size: xx-large;
+    //text-indent: 8px; 
+    border: none; 
+    padding: 13px 10px; 
+    width:auto; 
+    margin-bottom: 20px; 
+    box-shadow: inset 0px 2px 3px rgba( 0,0,0,0.1 ); 
+    clear: both;
+}
+button:hover {
+    cursor: pointer;
+    background: #fff; 
+}
+button:active{
+    background: #fff; 
+    box-shadow: 0px 0px 0px 3px rgba(255,0,0,0.3), inset 0px 2px 3px rgba( 0,0,0,0.2 ), 0px 5px 5px rgba( 0,0,0,0.15 ); 
+    outline: none;   
+} 
+
+button:hover #menu {
+    display: none;
+}
+canvas:hover {
+    cursor: pointer;
+}
+select { 
+    background: #f5f5f5;     
+    font-size: xx-large;
+    -moz-border-radius: 3px; 
+    -webkit-border-radius: 3px; 
+    border-radius: 10px;
+    font-size: xx-large;
+    //text-indent: 8px; 
+    border: none; 
+    padding: 13px 10px; 
+    width:490px; 
+    margin-bottom: 20px; 
+    box-shadow: inset 0px 2px 3px rgba( 0,0,0,0.1 ); 
+    clear: both; 
+} 
+select:hover {
+    cursor: pointer;
+}
+select:focus { 
+    background: #fff; 
+    box-shadow: 0px 0px 0px 3px rgba(255,0,0,0.3), inset 0px 2px 3px rgba( 0,0,0,0.2 ), 0px 5px 5px rgba( 0,0,0,0.15 ); 
+    outline: none;    
+} 
+input { 
+    background: #f5f5f5;     
+    font-size: xx-large;
+    -moz-border-radius: 3px; 
+    -webkit-border-radius: 3px; 
+    border-radius: 10px;
+    font-size: xx-large;
+    text-indent: 8px; 
     border: none; 
     padding: 13px 10px; 
     width:470px; 
@@ -68,16 +83,51 @@ input:focus {
     box-shadow: 0px 0px 0px 3px rgba(255,0,0,0.3), inset 0px 2px 3px rgba( 0,0,0,0.2 ), 0px 5px 5px rgba( 0,0,0,0.15 ); 
     outline: none;    
 } 
+input:-webkit-input-placeholder { 
+    color:    #b5b5b5; 
+} 
 
-select {
-   position: absolute;
-   background: transparent;
-   width: 268px;
-   padding: 5px;
-   font-size: 16px;
-   line-height: 1;
-   border: 0;
-   border-radius: 0;
-   height: 34px;
-   -webkit-appearance: none;
-   }
+input-moz-placeholder { 
+    color:    #b5b5b5; 
+} 
+
+#menu {
+    display: block;
+    position: absolute;
+    width: 530px;
+    height: 330px;
+    left: 0;
+    top: 0;
+    background-color: rgba( 14, 70, 154, 0.9 );
+    box-shadow: 0px 5px 5px rgba( 0,0,0,0.15 );
+    border: 1px solid rgb( 14, 70, 154);
+    border-bottom-right-radius: 15px;
+    padding-bottom: 50px;
+}
+
+.menu-item {
+    display: block;
+    position: absolute;
+    width: auto;
+    height: auto;
+}
+
+#language {    
+    left: 20px;
+    top: 20px;
+}
+
+#go {
+    right: 20px;
+    top: 290px;
+}
+
+#search {
+    left: 20px;
+    top: 110px;
+}
+
+#hashtag {
+    left: 20px;
+    top: 200px;
+}

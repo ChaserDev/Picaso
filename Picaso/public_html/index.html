@@ -22,23 +22,35 @@
         <script src="js/color.js"></script>
         <script src="js/text.js"></script>
         <script src="js/jquery.TextTranslate.js"></script>
-        <!--<script src="js/canvas.js"></script>-->
-        <!--<script src="js/picaso.js"></script>-->
         <script src="js/charlal1/matrix.js"></script>
     </head>
 
     <body>        
         <canvas id="c"></canvas>
-        <div id="input">
-            <input type="text" placeholder="Search Wikipedia" id="hashtag">
-            <button id="go"><img src="search.png" width="32" height="32" alt="submit" border="0" /></button>
-            <select>
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="mercedes">Mercedes</option>
-                <option value="audi">Audi</option>
-            </select>
+
+        <div id="menu">
+            <div id="search" class="menu-item">
+                <input type="text" placeholder="Search Wikipedia" id="wSearch">
+            </div>
+            <div id="hashtag" class="menu-item">
+                <input type="text" placeholder="Search Instagram" id="iHashtag">
+            </div>
+            <div id="language" class="menu-item">
+                <select id="sLanguage">
+                    <option value="en">English</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="es">Spanish</option>
+                    <option value="ru">Russian</option>
+                    <option value="it">Italian</option>
+                    <option value="sv">Swedish</option>
+                    <option value="nl">Dutch</option>
+                    <option value="pl">Polish</option>
+                </select>
+            </div>
+            <div id="go" class="menu-item">
+                <button id="gGo">GO</button>
+            </div>            
         </div>
-        <!--<div id="spinner"><img src="logo.png" alt="spinner" width="100" height="100" id="image"></div>-->
     </body>
 </html>
