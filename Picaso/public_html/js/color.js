@@ -1,3 +1,7 @@
+/*
+
+		color.js
+*/
 var R = "0";	
 var B = "1";
 var G = "2";
