@@ -71,7 +71,7 @@ var ColorThief = function () {};
  *
  * */
 ColorThief.prototype.getColor = function(sourceImage, quality) {
-    var palette       = this.getPalette(sourceImage, 5, 1);
+    var palette       = this.getPalette(sourceImage, 5, 10);
     var dominantColor = palette[0];
     return dominantColor;
 };
