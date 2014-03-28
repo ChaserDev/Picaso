@@ -1,33 +1,81 @@
+/*
+ * Picaso
+ * @type @exp;document@call;getElementById
+ */
+
+// Constants
+var MENU_TOGGLE_SPEED = 500;
+var DRAW_RENDER_SPEED = 150;
+var TEXT_CHECK_INTERVAL = 100;
+var SQUARE_SHADOW_BLUR = 5;
+var SQUARE_SHADOW_COLOR = "#252525";
+var SQUARE_SHADOW_OFFSET_X = 1;
+var SQUARE_SHADOW_OFFSET_Y = -1;
+var RANDOM_PROBABILITY = 0.975;
+var SQUARE_SIZE = 100;
+
+// Canvas
 var canvas;
 var context;
+// Timers
 var timer;
 var textTimer;
-
-var charPointer = 0;
-// Initial charset
+// Variables
+var charPointer;
 var feed = "";
-var hashtag = "";
-var font_size = 100;
-//var columns = c.width / font_size; //number of columns for the rain
-//an array of drops - one per column
-var drops = [];
+var squares = [];
 
+/*************************************************************
+	When the window loads
+*************************************************************/
 window.onload = function() {
     colorInit();
     textInit();
     init();
 };
 
+/*************************************************************
+	Toggle for menu effect
+*************************************************************/
 $(document).ready(function() {
     $("canvas").click(function() {
-        $("#menu").slideToggle(500);
+        $("#menu").slideToggle(MENU_TOGGLE_SPEED);
     });
 });
 
+/*************************************************************
+	Initialization
+*************************************************************/
 function init() {
     var button = document.getElementById('gGo');
     button.onclick = go;
 
+    initCanvas();    
+    resetSquares();    
+
+    timer = setInterval(draw, DRAW_RENDER_SPEED);
+    textTimer = setInterval(checkTextFeed, TEXT_CHECK_INTERVAL);
+}
+
+/*************************************************************
+	When the go button is clicked starts all the feeds
+*************************************************************/
+function go() {
+    var search = document.getElementById('wSearch');
+    var hashtag = document.getElementById('iHashtag');
+    var language = document.getElementById('sLanguage');
+
+    newImageSearch(hashtag.value);
+    fetchWiki(search.value, language.value);
+    resetSquares();
+
+    textTimer = setInterval(checkTextFeed, TEXT_CHECK_INTERVAL);
+}
+
+/*************************************************************
+	Setup the canvas for the drawing
+*************************************************************/
+function initCanvas() {
     // Make canvas
     canvas = document.getElementById('c');
     context = canvas.getContext("2d");
@@ -37,72 +85,66 @@ function init() {
     canvas.width = window.innerWidth;
 
     // Set column size;
-    columns = c.width / font_size; //number of columns for the rain
-
-    //x below is the x coordinate
-    //1 = y co-ordinate of the drop(same for every drop initially)
-    for (var x = 0; x < columns; x++)
-        drops[x] = 0;
-
-    context.shadowBlur = 5;
-    context.shadowColor = '#252525';
-    context.shadowOffsetX = 1; // offset along X axis
-    context.shadowOffsetY = -1;  // offset along Y axis
-
-    timer = setInterval(draw, 150);
-    textTimer = setInterval(checkTextFeed, 100);
+    columns = c.width / SQUARE_SIZE; //number of columns
+    
+    // Square styling
+    context.shadowBlur = SQUARE_SHADOW_BLUR;
+    context.shadowColor = SQUARE_SHADOW_COLOR;
+    context.shadowOffsetX = SQUARE_SHADOW_OFFSET_X; // offset along X axis
+    context.shadowOffsetY = SQUARE_SHADOW_OFFSET_Y;  // offset along Y axis
 }
 
-function go() {
-    var search = document.getElementById('wSearch');
-    var hashtag = document.getElementById('iHashtag');
-    var language = document.getElementById('sLanguage');
-
-    newImageSearch(hashtag.value);
-    fetchWiki(search.value, language.value);
-
-    charPointer = 0;
-
-    for (var x = 0; x < columns; x++)
-        drops[x] = 0;
-
-    textTimer = setInterval(checkTextFeed, 100);
-}
-
-//drawing the characters
+/*************************************************************
+	Draws the sqaures to the canvas
+*************************************************************/
 function draw() {
     //looping over squares
-    for (var i = 0; i < drops.length; i++)
+    for (var i = 0; i < squares.length; i++)
     {
+        // Resets the pointer to the start of the string
         if (charPointer >= feed.length)
             charPointer = 0;
 
-        // Random character to print
-        //var char = feed[Math.floor(Math.random() * feed.length)];
-        var char = feed[charPointer];
-        context.fillStyle = getColor(char);//getRandomColor();//"#0F0"; //green text
-        // Draw to the canvas
-        //context.fillText(char, i * font_size, drops[i] * font_size);
-        context.fillRect(i * font_size, drops[i] * font_size, font_size, font_size);
-        context.fillRect(drops[i] * font_size, i * font_size, font_size, font_size);
-        //context.fillRect(drops[i] * font_size, i * font_size,  font_size, font_size);
-        // Send the drop back to the top randomly after it has crossed the screen
+        // Sets the color
+        context.fillStyle = getColor(feed[charPointer]);
+        
+        // Vertical
+        context.fillRect(i * SQUARE_SIZE, squares[i] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        // Horizontal
+        context.fillRect(squares[i] * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        
+        // Send the square back to the top randomly after it has crossed the screen
         // adding randomness to the reset to make the drops scattered on the Y axis
-        //if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
-        if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
-            drops[i] = -1;
+        if (squares[i] * SQUARE_SIZE > canvas.height && Math.random() > RANDOM_PROBABILITY)
+            squares[i] = -1;
 
-        //incrementing Y coordinate
-        drops[i]++;
+        // Increment Y|X coordinate
+        squares[i]++;
         // Increment char pointer
         charPointer++;
     }
 }
 
+/*************************************************************
+	Error checking if something is in the textFeed
+*************************************************************/
 function checkTextFeed() {
     if (textFeed !== "") {
         textFeed.split("");
+        // Add  to drawing text feed
         feed = textFeed;
+        // Stop the timer
         clearInterval(textTimer);
     }
+}
+
+/*************************************************************
+	Resets to initial value at the top of the screen
+*************************************************************/
+function resetSquares() {
+    charPointer = 0;
+    //x below is the x coordinate
+    //1 = y co-ordinate of the square(same for every square initially)
+    for (var x = 0; x < columns; x++)
+        squares[x] = 0;
 }
