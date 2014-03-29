@@ -14,12 +14,13 @@ var LOWER_CASE_START = 97;
 var UPPER_CASE_START = 65;
 var NUMBER_START = 48;
 var COLOR_ARRAY_LENGTH = 63;
-var DEFAULT_TAG_SEARCH = "otago";
+var DEFAULT_IMAGE_TAG_SEARCH = "otago";
 var COLOR_JS_API_PREFIX = "https://api.instagram.com/v1/tags/";
 var COLOR_JS_API_SUFFIX = "/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
 
 var myURL;
 var nextURL;
+var myTag;
 
 var colorArray;
 var colorArrayCounter;
@@ -31,6 +32,8 @@ var colorArrayReady;
 	color.js initialization.  Must be called by window.onload
 *************************************************************/
 function colorInit() {
+
+	//myTag = DEFAULT_IMAGE_TAG_SEARCH;
 	sessionChars = DEFAULT_CHARS;
 		
 	colorArray = [];	
@@ -39,8 +42,7 @@ function colorInit() {
 	imageArrayPointer = 0;
 	createStaticArray();
 	
-	newImageSearch(DEFAULT_TAG_SEARCH);
-	
+	newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);	
 }
 
 /***************************************
@@ -53,7 +55,6 @@ function createStaticArray() {
 	for(var i = 0; i < DEFAULT_CHARS.length; i++) {
 		addRandomColorToColorArray(charArray[i]);
 	}	
-	console.log("static array done");
 }
 
 /*****************************************************************
@@ -76,23 +77,13 @@ function addRandomColorToColorArray(charCode) {
 	colorArray[charCode] = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G];	
 }
 
-function performHexConversion(value) {
-	
-	//convert to hex
-	value = value.toString(16);
-		
-	//append 0 if the hex needs padding
-	value = value.length == 1 ? "0" + value : value;
-	
-	return value;
-}
 
 /*
 	gets images from instagram
 	NOTE: next url for images  = JSON.pagination.next_url
 */
 function fetchImages() {
-	console.log("image url: " + myURL);
+	//console.log("image url: " + myURL);
 	
 	$.getJSON(myURL, 		
 		function(result) {		
@@ -109,12 +100,13 @@ function fetchImages() {
 			fetchImageColors(0);
 			}
 			else  {
-				newImageSearch(DEFAULT_TAG_SEARCH);
+				newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);
 			}				
 		})
 		.fail(function(xhr, status, error){
 		
-			console.log(status);
+			//If the image search fails, search the default image tag.
+			newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);
 		});
 
 }
@@ -127,10 +119,10 @@ function processNextUrl(url) {
 	console.log("next URL: " + returnURL);
 	return returnURL;
 }
-
+/*******************************************************/
 function fetchImageColors(iteration){
 
-	console.log("fetching image colors");
+	//console.log("fetching image colors");
 	
 	var imageURL = imageArray[iteration];	
 	
@@ -155,14 +147,14 @@ function fetchImageColors(iteration){
 			fetchImageColorsTurnaround(iteration);
 		},
 		error: function(xhr, text_status) {
-			console.log("fail");
-			console.log(xhr);	
+			//console.log("fail");
+			//console.log(xhr);	
 			fetchImageColorsTurnaround(iteration);
 		}	
 		
 	});
 }
-
+/*******************************************************/
 function fetchImageColorsTurnaround(iteration) {
 
 	if(colorArrayCounter < sessionChars.length)
@@ -186,35 +178,37 @@ function fetchImageColorsTurnaround(iteration) {
 			colorArrayCounter = 0;
 			//set the colorArrayReady flag to true
 			colorArrayReady = true;
-			listColors();
+			alert("done");
 	}
+}
+/*******************************************************/
+function newImageSearch(newTag) {
+	console.log("nis");
+	//check that the user has entered a new tag
+	if(myTag != newTag) {
+	
+		myTag = newTag;
+		//strip white space from given tag
+		var tag = "";
+		for(var c in myTag) {
+			
+			if(myTag[c] != ' ') {
+				tag += myTag[c];
+			}		
+		}
+		console.log("new tag: " + tag);	
+		myURL = buildMyURL(tag);		
+		createDynamicArray();
+	}
+	else {
+		console.log("same tag");
+	}
+	
 }
 
-function newImageSearch(newTag) {
-	
-	
-	//strip white space from given tag
-	var tag = "";
-	for(var c in newTag) {
-		
-		if(newTag[c] != ' ') {
-			tag += newTag[c];
-		}		
-	}
-	console.log("new tag: " + tag);	
-	myURL = buildMyURL(tag);		
-	createDynamicArray();
-}
-//DELETEME!!!
-function listColors() {
-	console.log("T: " + getColor("T"));
-	console.log("1: " + getColor("1"));
-	console.log("m: " + getColor("m"));
-}
-/*
-	creates an array of colors which consist of 
-	the dominant color of recent instagram images
-*/
+/*********************************************************************************************
+	Creates an array of colors which consist of the dominant color of recent instagram images.
+*********************************************************************************************/
 function createDynamicArray() {
 
 	colorArrayReady =false;
@@ -222,10 +216,11 @@ function createDynamicArray() {
 	colorArrayCounter = 0;
 	fetchImages();
 }
-
+/*******************************************************/
 function buildMyURL(tag) {
 	return COLOR_JS_API_PREFIX + tag + COLOR_JS_API_SUFFIX;
 }
+/*******************************************************/
 function getColor(c) {
 	//do some stuff here
 	var returnColor = colorArray['other'];
@@ -236,9 +231,17 @@ function getColor(c) {
 	}
 	else
 	{
-		returnColor = colorArray['other'];
+		if(colorArrayReady) {
+			colorArrayCounter = sessionChars.length;
+			fetchImages();
+		}
+		//Make sure the given char is not undefined.
+		if(c != undefined) {
+			sessionChars += c;
+			console.log("charArray: " + sessionChars);
+			returnColor = colorArray['other'];
+		}	
 	}
 	
 	return returnColor;
-	//return colorArray[adamsChar]
 }
