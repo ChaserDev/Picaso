@@ -61,7 +61,7 @@ function createStaticArray() {
 	adds a random color to the color array at the given parameter
 *****************************************************************/
 function addRandomColorToColorArray(charCode) {
-
+	console.log("addRandomColorToColorArray " + charCode);
 	var rgbArray = [];
 	
 	//generate a random hexadecimal color
@@ -83,7 +83,7 @@ function addRandomColorToColorArray(charCode) {
 	NOTE: next url for images  = JSON.pagination.next_url
 */
 function fetchImages() {
-	//console.log("image url: " + myURL);
+	console.log("fetchImages");
 	
 	$.getJSON(myURL, 		
 		function(result) {		
@@ -112,6 +112,7 @@ function fetchImages() {
 }
 
 function processNextUrl(url) {
+	console.log("processNextUrl");
 	var returnURL;
 	var startIndex = url.indexOf("callback=");
 	var endIndex = url.indexOf("&");
@@ -121,7 +122,7 @@ function processNextUrl(url) {
 }
 /*******************************************************/
 function fetchImageColors(iteration){
-
+	console.log("fetchImageColors " + iteration);
 	//console.log("fetching image colors");
 	
 	var imageURL = imageArray[iteration];	
@@ -142,6 +143,7 @@ function fetchImageColors(iteration){
 			
 			//increment colorArrayCounter
 			colorArrayCounter++;
+			console.log("cac: " + colorArrayCounter);
 			console.log(colorArrayCounter + ": " + color);
 			//check if colorArray needs more colors
 			fetchImageColorsTurnaround(iteration);
@@ -156,7 +158,7 @@ function fetchImageColors(iteration){
 }
 /*******************************************************/
 function fetchImageColorsTurnaround(iteration) {
-
+	console.log("fetchImageColorsTurnaround " + iteration);
 	if(colorArrayCounter < sessionChars.length)
 	{
 		//increment iteration
@@ -183,7 +185,7 @@ function fetchImageColorsTurnaround(iteration) {
 }
 /*******************************************************/
 function newImageSearch(newTag) {
-	console.log("nis");
+	console.log("nis " + newTag);
 	//check that the user has entered a new tag
 	if(myTag != newTag) {
 	
@@ -210,7 +212,7 @@ function newImageSearch(newTag) {
 	Creates an array of colors which consist of the dominant color of recent instagram images.
 *********************************************************************************************/
 function createDynamicArray() {
-
+	console.log("createDynamicArray");
 	colorArrayReady =false;
 	
 	colorArrayCounter = 0;
@@ -232,9 +234,12 @@ function getColor(c) {
 	else
 	{
 		if(colorArrayReady) {
+			console.log("restarting color array");
 			colorArrayCounter = sessionChars.length;
+			console.log("cac: " + colorArrayCounter);
 			fetchImages();
 		}
+			
 		//Make sure the given char is not undefined.
 		if(c != undefined) {
 			sessionChars += c;
