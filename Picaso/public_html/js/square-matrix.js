@@ -67,7 +67,7 @@ function go() {
 
     newImageSearch(hashtag.value);
     fetchWiki(search.value, language.value);
-    resetSquares();
+    squaresReset();
 
     textTimer = setInterval(textFeedCheck, TEXT_CHECK_INTERVAL);
 }
