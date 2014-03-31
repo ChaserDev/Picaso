@@ -7,6 +7,7 @@ var R = "0";
 var B = "1";
 var G = "2";
 
+var COLOR_PARTS = 3;
 //Default characters to find colors for on window load.  used to initialize sessionChars. 
 var DEFAULT_CHARS = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#.,?!";
 
@@ -19,6 +20,12 @@ var DEFAULT_IMAGE_TAG_SEARCH = "otago";
 var COLOR_JS_API_PREFIX = "https://api.instagram.com/v1/tags/";
 var COLOR_JS_API_SUFFIX = "/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
 
+var PROCESS_START_INDEX = "callback=";
+var PROCESS_END_INDEX = "&";
+
+var COLOR_START = "rgb(";
+var COLOR_SPACE = ",";
+var COLOR_END = ")";
 //myURL, nextURL, and myTag are used to make calls to the instagram API.
 var myURL;
 var nextURL;
@@ -26,6 +33,8 @@ var myTag;
 
 //colorArray holds a dynamic array of colors based on an instagram tag search.
 var colorArray;
+
+//colorArrayCounter is used to point to a char in sessionChars when assigning that char a color.
 var colorArrayCounter;
 
 //imageArray holds the URLs returned from the instagram tag search.
@@ -76,7 +85,7 @@ function addRandomColorToColorArray(charCode) {
 	var rgbArray = [];
 	
 	//generate a random hexadecimal color
-	for(var i = 0; i < 3; i++) {
+	for(var i = 0; i < COLOR_PARTS; i++) {
 		
 		//get a random number
 		value = Math.floor(Math.random()*COLOR_RANGE);
@@ -85,7 +94,7 @@ function addRandomColorToColorArray(charCode) {
 	}
 	
 	//create a color with the random hex values in rgbArray
-	colorArray[charCode] = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G];	
+	colorArray[charCode] = COLOR_START + rgbArray[R] +COLOR_SPACE+ rgbArray[B] +COLOR_SPACE+ rgbArray[G] +COLOR_END;	
 }
 
 
@@ -113,7 +122,7 @@ function fetchImages() {
 			}				
 		})
 		.fail(function(xhr, status, error){
-		
+			console.log("fail get image");
 			//If the image search fails, search the default image tag.
 			newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);
 		});
@@ -121,10 +130,11 @@ function fetchImages() {
 }
 
 function processNextUrl(url) {
-	console.log("processNextUrl");
 	var returnURL;
-	var startIndex = url.indexOf("callback=");
-	var endIndex = url.indexOf("&");
+	
+	var startIndex = url.indexOf(PROCESS_START_INDEX);
+	
+	var endIndex = url.indexOf(PROCESS_END_INDEX);
 	returnURL = url.substring(0, startIndex + 9) + "?" + url.substring(endIndex);	
 	console.log("next URL: " + returnURL);
 	return returnURL;
@@ -145,9 +155,10 @@ function fetchImageColors(iteration){
 				var colorThief = new ColorThief();					
 				var rgbArray = colorThief.getColor(image);	
 							
+				
 				//create a color with the random hex values in rgbArray
-				var color = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G] +")";	
-						
+				var color = COLOR_START + rgbArray[R] +COLOR_SPACE+ rgbArray[B] +COLOR_SPACE+ rgbArray[G] +COLOR_END;	
+				console.log(color);
 				colorArray[charArray[colorArrayCounter]] = color;						
 				
 				//increment colorArrayCounter
@@ -156,8 +167,7 @@ function fetchImageColors(iteration){
 				fetchImageColorsTurnaround(iteration);
 			},
 			error: function(xhr, text_status) {
-				//console.log("fail");
-				//console.log(xhr);	
+				console.log("fail getImageColors");
 				fetchImageColorsTurnaround(iteration);
 			}			
 		});
@@ -234,14 +244,16 @@ function getColor(c) {
 	}
 	else
 	{
-		if(colorArrayReady) {
-			colorArrayCounter = sessionChars.length;
-			fetchImages();
-		}
-			
-		//Make sure the given char is not undefined.
+	//Make sure the given char is not undefined.
 		if(c != undefined) {
 			sessionChars += c;
+			
+			//If the colorArray is finished building, 
+			//only add colors starting from the new char.
+			if(colorArrayReady) {
+				colorArrayCounter = sessionChars.length;
+				fetchImages();
+			}		
 		}	
 	}	
 	return returnColor;
