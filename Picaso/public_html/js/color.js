@@ -185,28 +185,35 @@ function processNextUrl(url) {
 **********************************************************************************/
 function fetchImageColors(iteration){
 
+	//Check that the color array is not ready.
 	if(colorArrayReady == false)
 	{
+		//Get the images URL.
 		var imageURL = imageArray[iteration];	
 		
+		//getImageData retrieves the data from an image so that we can
+		//use color-theif.js to find the dominant color.
 		$.getImageData({
 			url: imageURL,				
 			success: function(image) {	
 					
-					
+				//Split the sessionChars string into an array.	
 				var charArray = sessionChars.split('');
+				
+				//Extract and store the dominant color from the image in an array.
 				var colorThief = new ColorThief();					
 				var rgbArray = colorThief.getColor(image);	
-							
-				
-				//create a color with the random hex values in rgbArray
+											
+				//Create a color with the values in rgbArray.
 				var color = COLOR_START + rgbArray[R] +COLOR_SPACE+ rgbArray[B] +COLOR_SPACE+ rgbArray[G] +COLOR_END;	
-				console.log(color);
+				
+				//Put the color in the colorArray.
 				colorArray[charArray[colorArrayCounter]] = color;						
 				
-				//increment colorArrayCounter
+				//Increment colorArrayCounter.
 				colorArrayCounter++;
-				//check if colorArray needs more colors
+				
+				//Check if colorArray needs more colors
 				fetchImageColorsTurnaround(iteration);
 			},
 			error: function(xhr, text_status) {
@@ -217,53 +224,72 @@ function fetchImageColors(iteration){
 	}
 }
 
-/***********************
-
-********************************/
+/**************************************************************************
+	fetchImageColorsTurnaround determines the action to take after an image 
+	color has been added to the color array.  its options are:
+	
+	-Get more images from instagram if all the images in the array 
+	 have been used.
+	 
+	-Get another image color.
+	
+	-stop getting image colors, set colorArrayReady to true.
+**************************************************************************/
 function fetchImageColorsTurnaround(iteration) {
 
+	//Check that the colorArrayCounter doesn't exceed the length of the 
+	//sessionChars string.
 	if(colorArrayCounter < sessionChars.length)
 	{
-		//increment iteration
+		//Increment iteration.
 		iteration++;
 			
-		//check if the iteration has reached its end
+		//Check if the iteration has reached its end.
 		if(iteration == imageArray.length){
 				
-			//if it has, fetch more images
+			//If it has, fetch more images.
 			myURL = nextURL;
 			fetchImages();
 		}
 		else{
+			//If not, fetch the dominant color of the next
+			//image in the image array.
 			fetchImageColors(iteration);
 		}
 	}
+	//Stop getting colors.
 	else {
 			//reset the colorArrayCounter
 			colorArrayCounter = 0;
+			
 			//set the colorArrayReady flag to true
 			colorArrayReady = true;
 	}
 }
 
-/***********************
-
-********************************/
+/*********************************************************************************
+	newImageSearch takes a string as a parameter, formats it to remove spaces, and
+	calls createDynamicArray.
+*********************************************************************************/
 function newImageSearch(newTag) {
 
 	//check that the user has entered a new tag
 	if(myTag != newTag) {
 	
 		myTag = newTag;
-		//strip white space from given tag
+		
 		var tag = "";
 		for(var c in myTag) {
 			
+			//If the char is a white space, don't remove it from the tag.
 			if(myTag[c] != ' ') {
 				tag += myTag[c];
 			}		
 		}
+		//Create URL from the formatted tag.
 		myURL = buildMyURL(tag);		
+		
+		//Create an array of images.
 		createDynamicArray();
 	}	
 }
@@ -273,34 +299,36 @@ function newImageSearch(newTag) {
 *********************************************************************************************/
 function createDynamicArray() {
 
-	colorArrayReady =false;
-	
+	colorArrayReady =false;	
 	colorArrayCounter = 0;
 	fetchImages();
 }
 
-/**************************
-
-*****************************/
+/*************************
+	Builds a URL for AJAX.
+*************************/
 function buildMyURL(tag) {
 	return COLOR_JS_API_PREFIX + tag + COLOR_JS_API_SUFFIX;
 }
 
-/*************************
-
-*****************************/
+/**************************************************************
+	Takes a char as an array index pointer and returns a color.
+**************************************************************/
 function getColor(c) {
-	console.log(c);
-	//do some stuff here
+
+	//Set the return color to the default color.
 	var returnColor = colorArray[DEFAULT_COLOR_TAG];
 	
+	//Check if the given char is in the array.
 	if(sessionChars.indexOf(c) > -1)
 	{
+		//If it is, set the return color to the color referenced by the char.
 		returnColor = colorArray[c];
 	}
+	//If not, add the char to the sessionChars string.
 	else
 	{
-	//Make sure the given char is not undefined.
+		//Make sure the given char is not undefined.
 		if(c != undefined) {
 			sessionChars += c;
 			
