@@ -124,37 +124,41 @@ function processNextUrl(url) {
 function fetchImageColors(iteration){
 	console.log("fetchImageColors " + iteration);
 	//console.log("fetching image colors");
-	
-	var imageURL = imageArray[iteration];	
-	
-	$.getImageData({
-		url: imageURL,				
-		success: function(image) {	
-				
-				
-			var charArray = sessionChars.split('');
-			var colorThief = new ColorThief();					
-			var rgbArray = colorThief.getColor(image);	
-						
-			//create a color with the random hex values in rgbArray
-			var color = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G] +")";	
-					
-			colorArray[charArray[colorArrayCounter]] = color;						
-			
-			//increment colorArrayCounter
-			colorArrayCounter++;
-			console.log("cac: " + colorArrayCounter);
-			console.log(colorArrayCounter + ": " + color);
-			//check if colorArray needs more colors
-			fetchImageColorsTurnaround(iteration);
-		},
-		error: function(xhr, text_status) {
-			//console.log("fail");
-			//console.log(xhr);	
-			fetchImageColorsTurnaround(iteration);
-		}	
+	if(colorArrayReady == false)
+	{
+		var imageURL = imageArray[iteration];	
 		
-	});
+		$.getImageData({
+			url: imageURL,				
+			success: function(image) {	
+					
+					
+				var charArray = sessionChars.split('');
+				var colorThief = new ColorThief();					
+				var rgbArray = colorThief.getColor(image);	
+							
+				//create a color with the random hex values in rgbArray
+				var color = "rgb(" + rgbArray[R] +","+ rgbArray[B] +","+ rgbArray[G] +")";	
+						
+				colorArray[charArray[colorArrayCounter]] = color;						
+				
+				//increment colorArrayCounter
+				colorArrayCounter++;
+				console.log("cac: " + colorArrayCounter);
+				console.log(colorArrayCounter + ": " + color);
+				//check if colorArray needs more colors
+				fetchImageColorsTurnaround(iteration);
+			},
+			error: function(xhr, text_status) {
+				//console.log("fail");
+				//console.log(xhr);	
+				fetchImageColorsTurnaround(iteration);
+			}			
+		});
+	}
+	else {
+		console.log("double done!");
+	}
 }
 /*******************************************************/
 function fetchImageColorsTurnaround(iteration) {
@@ -180,7 +184,7 @@ function fetchImageColorsTurnaround(iteration) {
 			colorArrayCounter = 0;
 			//set the colorArrayReady flag to true
 			colorArrayReady = true;
-			alert("done");
+			console.log("done");
 	}
 }
 /*******************************************************/
