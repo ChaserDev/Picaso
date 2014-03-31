@@ -11,21 +11,30 @@ var COLOR_PARTS = 3;
 //Default characters to find colors for on window load.  used to initialize sessionChars. 
 var DEFAULT_CHARS = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#.,?!";
 
+//The tag and default color to use when a color that is not associated with a char in the colorArray is needed.
 var DEFAULT_COLOR_TAG = "other";
 var DEFAULT_COLOR = "#000000";
 
+//Range of colors used in RGB (0 - 255);
 var COLOR_RANGE = 256;
 
+//Consts used to make calls to the instagram API.  Default tag is the tag that is
+//searched for on window load.
 var DEFAULT_IMAGE_TAG_SEARCH = "otago";
 var COLOR_JS_API_PREFIX = "https://api.instagram.com/v1/tags/";
 var COLOR_JS_API_SUFFIX = "/media/recent?callback=?&amp;client_id=4e32d268a27b498e8c9e7840c7863f11";
 
+//Consts used to determine the start and end index when processing nextURL.
+//Required because the next url returned by instagram contains jibberish for callback.
 var PROCESS_START_INDEX = "callback=";
+var START_INDEX_LENGTH = 9;
 var PROCESS_END_INDEX = "&";
 
+//Consts used to create a color string.
 var COLOR_START = "rgb(";
 var COLOR_SPACE = ",";
 var COLOR_END = ")";
+
 //myURL, nextURL, and myTag are used to make calls to the instagram API.
 var myURL;
 var nextURL;
@@ -50,18 +59,21 @@ var sessionChars;
 var colorArrayReady;
 
 /*************************************************************
-	color.js initialization.  Must be called by window.onload
+	color.js initialization.  Must be called by window.onload.
 *************************************************************/
 function colorInit() {
 	
+	//Set the session chars to default chars.
 	sessionChars = DEFAULT_CHARS;
 		
 	colorArray = [];	
+	//set the default color in the colorArray
 	colorArray[DEFAULT_COLOR_TAG] = DEFAULT_COLOR;
 	
-	imageArrayPointer = 0;
+	//Create the default array (random colors).
 	createStaticArray();
 	
+	//Search for images with the default tag.
 	newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);	
 }
 
@@ -70,76 +82,107 @@ function colorInit() {
 ***************************************/
 function createStaticArray() {
 
+	//Create an array of the default chars.
 	var charArray = DEFAULT_CHARS.split('');
-	//add colors to lower case letters
+	
+	//Add colors to the characters in charArray.
 	for(var i = 0; i < DEFAULT_CHARS.length; i++) {
+	
 		addRandomColorToColorArray(charArray[i]);
 	}	
 }
 
 /*****************************************************************
-	adds a random color to the color array at the given parameter
+	Adds a random color to the color array at the given parameter.
 *****************************************************************/
 function addRandomColorToColorArray(charCode) {
 
+	//rgbArray is used store the random color values.
 	var rgbArray = [];
 	
-	//generate a random hexadecimal color
+	//Generate a random rgb color.
 	for(var i = 0; i < COLOR_PARTS; i++) {
 		
-		//get a random number
+		//Get a random number.
 		value = Math.floor(Math.random()*COLOR_RANGE);
 		
+		//Store in rgbArray.
 		rgbArray[i] = value;
 	}
 	
-	//create a color with the random hex values in rgbArray
+	//Create a color with the random values in rgbArray.
 	colorArray[charCode] = COLOR_START + rgbArray[R] +COLOR_SPACE+ rgbArray[B] +COLOR_SPACE+ rgbArray[G] +COLOR_END;	
 }
 
 
-/*
-	gets images from instagram
-*/
+/*****************************
+	Get images from  instagram.
+*****************************/
 function fetchImages() {
 	
+	//AJAX request to instagram.
 	$.getJSON(myURL, 		
 		function(result) {		
 			
+			//if successful, will return an array of data.
 			if(result.data.length > 0) {
-			
+				
+				//Empty the imageArray.
 				imageArray = [];
+				
+				//Process the next url provided by the AJAX response.
 				nextURL = processNextUrl( result.pagination.next_url);	
 			
-				$.each(result.data, function(key, value) {								
+				//Iterate through each data result
+				$.each(result.data, function(key, value) {
+					
+					//Add the image URL to the imageArray.
 					imageArray.push(value.images.low_resolution.url);
 				});
 			
+			//Start the process of fetching the dominant colors of each image.
 			fetchImageColors(0);
 			}
+			//If unsuccessful, the data array will be empty.
 			else  {
+				//So we do a new image search for the default tag.
 				newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);
 			}				
 		})
 		.fail(function(xhr, status, error){
-			console.log("fail get image");
+			
 			//If the image search fails, search the default image tag.
 			newImageSearch(DEFAULT_IMAGE_TAG_SEARCH);
 		});
 
 }
 
+/********************************************************************************
+	processNextUrl takes the next_url from an AJAX response, and formats
+	it so it can be used to make another API call to instagram, and get different
+	images.
+********************************************************************************/
 function processNextUrl(url) {
-	var returnURL;
+
+	var returnURL;	
 	
+	//startIndex is the part of the string to end the first sub-string cut.
 	var startIndex = url.indexOf(PROCESS_START_INDEX);
 	
+	//endIndex is the part of the string to resume the sub-string cut.
 	var endIndex = url.indexOf(PROCESS_END_INDEX);
-	returnURL = url.substring(0, startIndex + 9) + "?" + url.substring(endIndex);	
-	console.log("next URL: " + returnURL);
+	
+	//The return URL is a formatted version of the given URL.  We need to remove the middle of it
+	//because it looks like callback=giberishhhhhhhho3ioqf&, when it should be callback=?&.
+	returnURL = url.substring(0, startIndex + START_INDEX_LENGTH) + "?" + url.substring(endIndex);	
+		
 	return returnURL;
 }
-/*******************************************************/
+
+/**********************************************************************************
+	fetchImageColors takes an image from the image array (indexed at iteration) 
+	and puts the dominant color in the colorArray, which is indexed by a character.	
+**********************************************************************************/
 function fetchImageColors(iteration){
 
 	if(colorArrayReady == false)
@@ -173,7 +216,10 @@ function fetchImageColors(iteration){
 		});
 	}
 }
-/*******************************************************/
+
+/***********************
+
+********************************/
 function fetchImageColorsTurnaround(iteration) {
 
 	if(colorArrayCounter < sessionChars.length)
@@ -199,7 +245,10 @@ function fetchImageColorsTurnaround(iteration) {
 			colorArrayReady = true;
 	}
 }
-/*******************************************************/
+
+/***********************
+
+********************************/
 function newImageSearch(newTag) {
 
 	//check that the user has entered a new tag
@@ -229,12 +278,19 @@ function createDynamicArray() {
 	colorArrayCounter = 0;
 	fetchImages();
 }
-/*******************************************************/
+
+/**************************
+
+*****************************/
 function buildMyURL(tag) {
 	return COLOR_JS_API_PREFIX + tag + COLOR_JS_API_SUFFIX;
 }
-/*******************************************************/
+
+/*************************
+
+*****************************/
 function getColor(c) {
+	console.log(c);
 	//do some stuff here
 	var returnColor = colorArray[DEFAULT_COLOR_TAG];
 	
@@ -252,6 +308,7 @@ function getColor(c) {
 			//only add colors starting from the new char.
 			if(colorArrayReady) {
 				colorArrayCounter = sessionChars.length;
+				colorArrayReady = false;
 				fetchImages();
 			}		
 		}	

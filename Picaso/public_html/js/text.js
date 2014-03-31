@@ -32,8 +32,6 @@ var ONLOAD_TEXT_API = "http://baconipsum.com/api/?type=meat-and-filler";
 //TextFeed is used to store the string received from the text API
 var textFeed = "";
 
-window.onload = textInit;
-
 /************************************************************
 	test.js initialization.  Must be called by window.onload.
 ************************************************************/
