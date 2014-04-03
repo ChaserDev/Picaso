@@ -29,7 +29,7 @@ var squares = [];
 	When the window loads
 *************************************************************/
 window.onload = function() {
-    colorInit();
+    imageInit();
     textInit();
     init();
 };
@@ -104,22 +104,15 @@ function draw() {
         // Resets the pointer to the start of the string
         if (charPointer >= feed.length)
             charPointer = 0;
-
-        // Sets the color
-        context.fillStyle = getColor(feed[charPointer]);
+		
+		
+        // Sets the image
+        var myImage = getImage(feed.charAt(charPointer));
         
         // Vertical
-       // context.fillRect(i * SQUARE_SIZE, squares[i] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-        // Horizontal
-      //  context.fillRect(squares[i] * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-        
-		var myImage = getImage(feed[charPointer]);
-		
 		context.drawImage(myImage, 0, 0, myImage.width, myImage.height, i * SQUARE_SIZE, squares[i] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-		
+        // Horizontal
 		context.drawImage(myImage, 0, 0, myImage.width, myImage.height, squares[i] * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-        
-		
 		// Send the square back to the top randomly after it has crossed the screen
         // adding randomness to the reset to make the drops scattered on the Y axis
         if (squares[i] * SQUARE_SIZE > canvas.height && Math.random() > RANDOM_PROBABILITY)

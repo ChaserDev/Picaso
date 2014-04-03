@@ -38,7 +38,6 @@ var textFeed = "";
 function textInit() {
 
 	fetchIpsum();	
-	getRandomPage("en");
 }
 
 /*************************************************************************	
