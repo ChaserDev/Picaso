@@ -12,7 +12,7 @@ var SQUARE_SHADOW_COLOR = "#252525";
 var SQUARE_SHADOW_OFFSET_X = 1;
 var SQUARE_SHADOW_OFFSET_Y = -1;
 var RANDOM_PROBABILITY = 0.975;
-var SQUARE_SIZE = 100;
+var SQUARE_SIZE = 20;
 
 // Canvas
 var canvas;
@@ -109,11 +109,18 @@ function draw() {
         context.fillStyle = getColor(feed[charPointer]);
         
         // Vertical
-        context.fillRect(i * SQUARE_SIZE, squares[i] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+       // context.fillRect(i * SQUARE_SIZE, squares[i] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
         // Horizontal
-        context.fillRect(squares[i] * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+      //  context.fillRect(squares[i] * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
         
-        // Send the square back to the top randomly after it has crossed the screen
+		var myImage = getImage(feed[charPointer]);
+		
+		context.drawImage(myImage, 0, 0, myImage.width, myImage.height, i * SQUARE_SIZE, squares[i] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+		
+		context.drawImage(myImage, 0, 0, myImage.width, myImage.height, squares[i] * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        
+		
+		// Send the square back to the top randomly after it has crossed the screen
         // adding randomness to the reset to make the drops scattered on the Y axis
         if (squares[i] * SQUARE_SIZE > canvas.height && Math.random() > RANDOM_PROBABILITY)
             squares[i] = -1;

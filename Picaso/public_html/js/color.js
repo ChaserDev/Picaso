@@ -46,8 +46,12 @@ var colorArray;
 //colorArrayCounter is used to point to a char in sessionChars when assigning that char a color.
 var colorArrayCounter;
 
-//imageArray holds the URLs returned from the instagram tag search.
+//tmpImageArray temporarily holds the URLs returned from the instagram tag search.
+var tmpImageArray;
+
 var imageArray;
+var DEFAULT_IMAGE_TAG = "i_default";
+var DEFAULT_IMAGE_URL = "op.jpg";
 
 //sessionChars is an associative array. each char in DEFAULT_CHARS is assigned a random color.
 //if a call is made to getColor with a char not in this array, it fetches a new color to associate 
@@ -69,6 +73,11 @@ function colorInit() {
 	colorArray = [];	
 	//set the default color in the colorArray
 	colorArray[DEFAULT_COLOR_TAG] = DEFAULT_COLOR;
+	
+	imageArray = [];	
+	imageArray[DEFAULT_IMAGE_TAG] = new Image();
+	imageArray[DEFAULT_IMAGE_TAG].src = DEFAULT_IMAGE_URL;
+	//imageArray[DEFAULT_IMAGE_TAG] = img;
 	
 	//Create the default array (random colors).
 	createStaticArray();
@@ -127,8 +136,8 @@ function fetchImages() {
 			//if successful, will return an array of data.
 			if(result.data.length > 0) {
 				
-				//Empty the imageArray.
-				imageArray = [];
+				//Empty the tmpImageArray.
+				tmpImageArray = [];
 				
 				//Process the next url provided by the AJAX response.
 				nextURL = processNextUrl( result.pagination.next_url);	
@@ -136,8 +145,8 @@ function fetchImages() {
 				//Iterate through each data result
 				$.each(result.data, function(key, value) {
 					
-					//Add the image URL to the imageArray.
-					imageArray.push(value.images.low_resolution.url);
+					//Add the image URL to the tmpImageArray.
+					tmpImageArray.push(value.images.low_resolution.url);
 				});
 			
 			//Start the process of fetching the dominant colors of each image.
@@ -189,14 +198,16 @@ function fetchImageColors(iteration){
 	if(colorArrayReady == false)
 	{
 		//Get the images URL.
-		var imageURL = imageArray[iteration];	
+		var imageURL = tmpImageArray[iteration];	
 		
 		//getImageData retrieves the data from an image so that we can
 		//use color-theif.js to find the dominant color.
 		$.getImageData({
 			url: imageURL,				
 			success: function(image) {	
-					
+				
+
+				//console.log(image);
 				//Split the sessionChars string into an array.	
 				var charArray = sessionChars.split('');
 				
@@ -210,6 +221,8 @@ function fetchImageColors(iteration){
 				//Put the color in the colorArray.
 				colorArray[charArray[colorArrayCounter]] = color;						
 				
+				imageArray[charArray[colorArrayCounter]] = image;
+				
 				//Increment colorArrayCounter.
 				colorArrayCounter++;
 				
@@ -217,7 +230,7 @@ function fetchImageColors(iteration){
 				fetchImageColorsTurnaround(iteration);
 			},
 			error: function(xhr, text_status) {
-				console.log("fail getImageColors");
+				//console.log("fail getImageColors");
 				fetchImageColorsTurnaround(iteration);
 			}			
 		});
@@ -245,7 +258,7 @@ function fetchImageColorsTurnaround(iteration) {
 		iteration++;
 			
 		//Check if the iteration has reached its end.
-		if(iteration == imageArray.length){
+		if(iteration == tmpImageArray.length){
 				
 			//If it has, fetch more images.
 			myURL = nextURL;
@@ -342,4 +355,36 @@ function getColor(c) {
 		}	
 	}	
 	return returnColor;
+}
+
+function getImage(c) {
+	
+	var returnImg =  imageArray[DEFAULT_IMAGE_TAG];
+	
+	//Check if the given char is in the array.
+	if(sessionChars.indexOf(c) > -1 && imageArray[c] != undefined)
+	{
+		//If it is, set the return color to the color referenced by the char.
+		returnImg = imageArray[c];
+		
+		console.log("new Image hint");
+	}
+	//If not, add the char to the sessionChars string.
+	else
+	{
+		//Make sure the given char is not undefined.
+		if(c != undefined) {
+			sessionChars += c;
+			
+			//If the colorArray is finished building, 
+			//only add colors starting from the new char.
+			if(colorArrayReady) {
+				colorArrayCounter = sessionChars.length;
+				colorArrayReady = false;
+				fetchImages();
+			}		
+		}	
+	}	
+	
+	return returnImg;
 }
